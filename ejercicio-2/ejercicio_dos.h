@@ -15,3 +15,12 @@ int indice_del_minimo_de(vector<int> &distancias);
 int nodo_cuya_distancia_es_igual_a( int valor_a_buscado, vector<int> &distancias);
 vector<int> distancias_de_un_nodo_a_todos_los_demas(int nodo_origen, vector<vector<int> > lista_adyacencias);
 int maximo_valor_de(vector<int> &distancias);
+
+struct camino_entre_dos_nodos{
+  int nodo_origen;
+  int nodo_destino;
+  vector<vector<int> > lista_adyacencias;
+  vector<int> camino;
+  vector<int> visitados;
+};
+bool aux_elegir_nodo_intermedio_entre(int nivel, struct camino_entre_dos_nodos &parametros);

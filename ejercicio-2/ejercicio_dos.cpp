@@ -21,13 +21,59 @@ int nodo_mas_lejano_a(int nodo_origen, vector<vector<int> > lista_adyacencias)
 
 int elegir_nodo_intermedio_entre(int nodo_origen, int nodo_destino, vector<vector<int> > lista_adyacencias)
 {
-  vector<int> distancias = distancias_de_un_nodo_a_todos_los_demas(nodo_origen, lista_adyacencias);
+  /* La idea es que el nodo_origen es el de distancia 0 y el nodo_destino es
+  el de distancia maxima pero todos en el medio existen, osea que yo elijo a
+  uno en el médio y es el que devuelvo. La otra forma es reconstruir el camino
+  entre nodo_origen y nodo_destino y tomar un nodo en el medio pero no se
+  como reconstruirlo... */
+  /* Esto en realidad está mal porque puede haber un nodo a la distancia que
+  yo elijo pero que en realidad no está en el camino entre los dos nodos. */
 
-  assert( indice_del_maximo_de(distancias) == nodo_destino );
-  assert( indice_del_minimo_de(distancias) == nodo_origen );
+  //vector<int> distancias = distancias_de_un_nodo_a_todos_los_demas(nodo_origen, lista_adyacencias);
+  //assert( indice_del_maximo_de(distancias) == nodo_destino );
+  //assert( indice_del_minimo_de(distancias) == nodo_origen );
+  //int distancia_intermedia = ((int) maximo_valor_de(distancias) / 2);
+  //return nodo_cuya_distancia_es_igual_a(distancia_intermedia, distancias);
 
-  int distancia_intermedia = ((int) maximo_valor_de(distancias) / 2);
-  return nodo_cuya_distancia_es_igual_a(distancia_intermedia, distancias);
+  vector<int> camino;
+  vector<int> visitados;
+  inicializar_vector_con(0,visitados, lista_adyacencias.size());
+
+  struct camino_entre_dos_nodos parametros;
+  parametros.nodo_origen = nodo_origen;
+  parametros.nodo_destino = nodo_destino;
+  parametros.lista_adyacencias = lista_adyacencias;
+  parametros.camino = camino;
+  parametros.visitados = visitados;
+
+  visitados.at(nodo_origen) = VISITADO;
+  aux_elegir_nodo_intermedio_entre(nodo_origen, parametros);
+  int respuesta = camino.at( ((int) camino.size() / 2) );
+  return respuesta;
+}
+
+bool aux_elegir_nodo_intermedio_entre(int nivel, struct camino_entre_dos_nodos &parametros)
+{
+  bool respuesta = false;
+
+  if(parametros.visitados.at(nivel) == VISITADO) return respuesta;
+
+  parametros.visitados.at(nivel) = VISITADO;
+  if(nivel == parametros.nodo_destino)
+  {
+    respuesta = true;
+    parametros.camino.push_back(nivel);
+  }else{
+    int adyacente;
+    for(int un_adyacente; un_adyacente < parametros.lista_adyacencias.at(nivel).at(un_adyacente); un_adyacente++)
+    {
+      adyacente = parametros.lista_adyacencias.at(nivel).at(un_adyacente);
+      respuesta = aux_elegir_nodo_intermedio_entre(adyacente, parametros);
+      if(respuesta) break;
+    }
+    if(respuesta) parametros.camino.push_back(nivel);
+  }
+  return respuesta;
 }
 
 int nodo_cuya_distancia_es_igual_a( int valor_a_buscado, vector<int> &distancias)
