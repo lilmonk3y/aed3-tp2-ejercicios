@@ -4,6 +4,109 @@
 #define NO_VISITADO 0
 #define DEBO_IMPLEMENTAR false
 
+/*           dos.uno              */
+
+//Faltan los parser para tomar la entrada.
+
+class grafo_resultado crear_agm_para(struct grafo_parametro grafo_entrada)
+{
+  /* El AGM lo hago con el enfoque de PRIM */
+  assert( DEBO_IMPLEMENTAR );
+
+
+  class grafo_resultado grafo_respuesta;
+  vector<int> visitados;
+  inicializar_vector_con(NO_VISITADO, visitados, grafo_entrada.lista_adyacencias.size());
+  grafo_respuesta.visitados = visitados;
+  grafo_respuesta.peso_total = 0;
+
+  /* Empiezo con el nodo 0 */
+  int nodo_actual = 0;
+  int recorridos = 0;
+  while( recorridos < grafo_entrada.lista_adyacencias.size() )
+  {
+    if(grafo_respuesta.visitados.at(nodo_actual) == NO_VISITADO )
+    {
+      grafo_respuesta.visitados.at(nodo_actual) = VISITADO;
+      recorridos++;
+      grafo_respuesta.agregar_aristas_adyacentes_a(nodo_actual, grafo_entrada);
+
+      struct arista una_arista = grafo_respuesta.minima_arista_que_no_forma_ciclos();
+      grafo_respuesta.agregar_arista_al_agm(una_arista);
+      recorridos++;
+      nodo_actual = una_arista.otro_nodo;
+    }else{
+      struct arista una_arista = grafo_respuesta.minima_arista_que_no_forma_ciclos();
+      grafo_respuesta.agregar_arista_al_agm(una_arista);
+      nodo_actual = una_arista.otro_nodo;
+    }
+
+  }
+  assert( visite_todos_los_nodos(grafo_respuesta.visitados) );
+  return grafo_respuesta;
+}
+
+void grafo_resultado::agregar_arista_al_agm(struct arista una_arista)
+{
+  lista_adyacencias_agm.at(una_arista.un_nodo).push_back(una_arista.otro_nodo);
+  lista_adyacencias_agm.at(una_arista.otro_nodo).push_back(una_arista.un_nodo);
+  peso_total += una_arista.peso;
+  return;
+}
+
+struct arista grafo_resultado::minima_arista_que_no_forma_ciclos()
+{
+  struct arista una_arista;
+  while(true)
+  {
+    /* saco aristas hasta que me de una arista que no forma ciclos */
+    una_arista = aristas_a_elegir.top();
+    aristas_a_elegir.pop();
+    if( not visite_a(una_arista.otro_nodo) ) break;
+  }
+  return una_arista;
+}
+
+bool grafo_resultado::visite_a(int otro_nodo)
+{
+  return visitados.at(otro_nodo) == VISITADO;
+}
+
+void grafo_resultado::agregar_aristas_adyacentes_a(int nodo_actual, grafo_parametro &grafo_entrada)
+{
+  for(int indice = 0; indice < grafo_entrada.lista_adyacencias.at(nodo_actual).size(); indice++)
+  {
+    int nodo_indice = grafo_entrada.lista_adyacencias.at(nodo_actual).at(indice);
+    if( visitados.at(nodo_indice) == VISITADO) continue;
+    struct arista una_arista;
+    una_arista.un_nodo = nodo_actual;
+    una_arista.otro_nodo = grafo_entrada.lista_adyacencias.at(nodo_actual).at(indice);
+    una_arista.peso = grafo_entrada.lista_pesos.at(nodo_actual).at(indice);
+    aristas_a_elegir.push(una_arista);
+  }
+  return;
+}
+
+bool visite_todos_los_nodos(vector<int> visitados)
+{
+  for(int indice = 0; indice < visitados.size(); indice++)
+  {
+    if(visitados.at(indice) == NO_VISITADO) return false;
+  }
+  return true;
+}
+
+
+
+
+
+
+
+
+
+
+
+/*            dos.dos           */
 int elegir_master(vector<vector<int> > lista_adyacencias)
 {
   //Elijo un nodo aleatorio y lo llamo "s"
