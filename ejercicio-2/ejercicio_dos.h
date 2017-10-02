@@ -35,16 +35,19 @@ struct comparador_de_aristas{
 
 class grafo_resultado{
   public:
+    /* metodos de clase */
+    void agregar_aristas_adyacentes_a(int nodo_actual, grafo_parametro &grafo_entrada);
+    void agregar_arista_al_agm(struct arista una_arista);
+    struct arista minima_arista_que_no_forma_ciclos();
+    bool visite_a(struct arista una_arista);
+    bool visite_a(int nodo);
+    int nodo_que_no_visite(struct arista una_arista);
+
+    /* variables de clase*/
     priority_queue<struct arista, vector<struct arista >, comparador_de_aristas> aristas_a_elegir;
     vector<int> visitados;
     vector<vector<int> > lista_adyacencias_agm;
     int peso_total;
-
-    void agregar_aristas_adyacentes_a(int nodo_actual, grafo_parametro &grafo_entrada);
-    void agregar_arista_al_agm(struct arista una_arista);
-    struct arista minima_arista_que_no_forma_ciclos();
-    bool visite_a(int otro_nodo);
-
 };
 
 class grafo_resultado crear_agm_para(struct grafo_parametro un_grafo);

@@ -11,9 +11,6 @@
 class grafo_resultado crear_agm_para(struct grafo_parametro grafo_entrada)
 {
   /* El AGM lo hago con el enfoque de PRIM */
-  assert( DEBO_IMPLEMENTAR );
-
-
   class grafo_resultado grafo_respuesta;
   vector<int> visitados;
   inicializar_vector_con(NO_VISITADO, visitados, grafo_entrada.lista_adyacencias.size());
@@ -25,25 +22,42 @@ class grafo_resultado crear_agm_para(struct grafo_parametro grafo_entrada)
   int recorridos = 0;
   while( recorridos < grafo_entrada.lista_adyacencias.size() )
   {
-    if(grafo_respuesta.visitados.at(nodo_actual) == NO_VISITADO )
+    if( not grafo_respuesta.visite_a(nodo_actual) )
     {
       grafo_respuesta.visitados.at(nodo_actual) = VISITADO;
       recorridos++;
       grafo_respuesta.agregar_aristas_adyacentes_a(nodo_actual, grafo_entrada);
-
-      struct arista una_arista = grafo_respuesta.minima_arista_que_no_forma_ciclos();
-      grafo_respuesta.agregar_arista_al_agm(una_arista);
-      recorridos++;
-      nodo_actual = una_arista.otro_nodo;
-    }else{
-      struct arista una_arista = grafo_respuesta.minima_arista_que_no_forma_ciclos();
-      grafo_respuesta.agregar_arista_al_agm(una_arista);
-      nodo_actual = una_arista.otro_nodo;
     }
-
+    struct arista una_arista = grafo_respuesta.minima_arista_que_no_forma_ciclos();
+    grafo_respuesta.agregar_arista_al_agm(una_arista);
+    nodo_actual = grafo_respuesta.nodo_que_no_visite(una_arista);
   }
+
   assert( visite_todos_los_nodos(grafo_respuesta.visitados) );
   return grafo_respuesta;
+}
+
+int grafo_resultado::nodo_que_no_visite(struct arista una_arista)
+{
+  int respuesta;
+  if( visite_a(una_arista.un_nodo) )
+  {
+    respuesta = una_arista.otro_nodo;
+    assert( not visite_a(una_arista.otro_nodo) );
+  }else{
+    respuesta = una_arista.un_nodo;
+  }
+  return respuesta;
+}
+
+bool grafo_resultado::visite_a(int nodo)
+{
+  return visitados.at(nodo) == VISITADO;
+}
+
+bool grafo_resultado::visite_a(struct arista una_arista)
+{
+  return ( (visitados.at(una_arista.otro_nodo) == VISITADO) and  (visitados.at(una_arista.un_nodo) == VISITADO) );
 }
 
 void grafo_resultado::agregar_arista_al_agm(struct arista una_arista)
@@ -62,14 +76,9 @@ struct arista grafo_resultado::minima_arista_que_no_forma_ciclos()
     /* saco aristas hasta que me de una arista que no forma ciclos */
     una_arista = aristas_a_elegir.top();
     aristas_a_elegir.pop();
-    if( not visite_a(una_arista.otro_nodo) ) break;
+    if( not visite_a(una_arista) ) break;
   }
   return una_arista;
-}
-
-bool grafo_resultado::visite_a(int otro_nodo)
-{
-  return visitados.at(otro_nodo) == VISITADO;
 }
 
 void grafo_resultado::agregar_aristas_adyacentes_a(int nodo_actual, grafo_parametro &grafo_entrada)
