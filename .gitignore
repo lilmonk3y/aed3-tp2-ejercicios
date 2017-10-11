@@ -1,2 +1,5 @@
 *.o
 impresionesOrdenadas
+.vs/
+.gitattributes
+Project1/
