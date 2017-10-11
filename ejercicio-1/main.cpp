@@ -4,31 +4,35 @@ using namespace std;
 
 int main(){
 	int n;
-	cin >> n;
-
-	int** costos = new int*[n];
-	for (int i = 0; i < n; i++)
+	while (cin >> n)
 	{
-		costos[i] = new int[n];
-	}
-
-	for (int i = 0; i < n; i++)
-	{
-		for (int j = 0; j <= i; j++)
+		int** costos = new int*[n];
+		for (int i = 0; i < n; i++)
 		{
-			cin >> costos[i][j];
+			costos[i] = new int[n];
 		}
-	}
-	int c;
-	c = impresionesOrdenadas(costos, n);
-		
-	cout << c;
 
-	for (int i = 0; i < n; i++)
-	{
-		delete costos[i];
-	}
-	delete costos;
+		for (int i = 0; i < n; i++)
+		{
+			for (int j = 0; j <= i; j++)
+			{
+				cin >> costos[i][j];
+			}
+		}
+		vector<int> out;
+		out = impresionesOrdenadas(costos, n);
 
+		while (!out.empty())
+		{
+			cout << out.back() << " ";
+			out.pop_back();
+		}
+		cout << endl;
+		for (int i = 0; i < n; i++)
+		{
+			delete costos[i];
+		}
+		delete costos;
+	}
 	return 0;
 }
