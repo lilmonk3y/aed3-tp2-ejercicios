@@ -1,4 +1,5 @@
 #include <vector>
+#include <iostream>
 using namespace std;
 
 //Funcion que devuelve la separacion de trabajos optima

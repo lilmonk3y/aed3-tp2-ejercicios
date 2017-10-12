@@ -12,6 +12,7 @@ vector<int> impresionesOrdenadas(int** costos, const int n)
 	//Primero encontramos todas las subsoluciones optimas
 	completarSubsoluciones(subproblemas, costos, n);
 
+
 	//Despues reconstruimos la solucion total del problema.
 	vector<int> trabajos = reconstruirSolucion(subproblemas, costos, n);
 
@@ -26,7 +27,7 @@ vector<int> impresionesOrdenadas(int** costos, const int n)
 
 
 
-void completarSubsoluciones(int** subproblemas, int** costos, const int n) 
+void completarSubsoluciones(int** subproblemas, int** costos, const int n)
 {
 	//El primer subproblema es trivial.
 	subproblemas[0][0] = costos[0][0];
@@ -66,42 +67,77 @@ vector<int> reconstruirSolucion(int** subproblemas, int** costos, const int n)
 
 	//El vector trabajos es el que guarda toda la informacion de la salida que va a ser impresa por pantalla en orden inverso.
 	vector<int> trabajos;
+	//Otra guarda los trabajos de la maquina que no vamos a imprimir.
+	vector<int> otra;
 
 	//Guarda el costo de la solucion para ser agregado al final de trabajos (y que se imprima primero)
 	int costoMin = subproblemas[n - 1][subpMin];
+
+	trabajos.push_back(subpMin - 1);
 
 
 	//Falta reconstruir la solucion optima en base a la matriz de subproblemas: (se recorre desde la ultima fila hasta la primera siguiendo el camino de esta solucion)
 	int i = n - 1;
 	while (i > 0)
 	{
-		//Este es el caso en el que la subsolucion optima esta en la diagonal.
-		//Se guarda el trabajo mas chico para ser impreso y nos movemos al subproblema de una linea mas arriba del que provenia esta solucion.
-		if (subpMin == i) {
-			trabajos.push_back(subpMin);
-			for (int j = 0; j < i; j++)
-			{
-				if (subproblemas[i - 1][j] + costos[i][j] == subproblemas[i][subpMin])
-				{
-					subpMin = j;
-				}
-			}
-
-		}
-		//En este caso ya no quedan mas trabajos, podemos terminar el ciclo.
-		else if (subpMin == 0)
+		//En cada iteracion hay un trabajo i o (subpMin - 1) que no fue asignado a ninguna maquina.
+		//Primero buscamos cual es y se asigna
+		if (subpMin - 1 == trabajos.back())
 		{
-			break;
+			otra.push_back(i);
 		}
-		//Este es el caso trivial, salteamos los trabajos de estas filas hasta encontrarnos en la diagonal.
-		//Los trabajos salteados estan implicitos en la maquina que no imprimimos.
+		else if (i == trabajos.back())
+		{
+			otra.push_back(subpMin - 1);
+		}
+		else if (i == otra.back()){
+			trabajos.push_back(subpMin - 1);
+		}
+		else {
+			trabajos.push_back(i);
+		}
+
+
+		//Buscamos el subproblema del que proviene este.
+		//Si no esta en la diagonal es trivial.
+		if (i != subpMin) {
+			i--;
+		}
+		//Si esta hay que buscar cual es el anterior.
 		else
 		{
-			i = subpMin;
+			
+			for (int j = 0; j < i; j++)
+			{
+				if (subproblemas[i][subpMin] == subproblemas[i - 1][j] + costos[i][j])
+				{
+					subpMin = j;
+					i--;
+					break;
+				}
+			}
 		}
+
+	}
+	//Falta asignar el trabajo 0
+	if (subpMin - 1 == trabajos.back())
+	{
+		otra.push_back(i);
+	}
+	else if (i == trabajos.back())
+	{
+		otra.push_back(subpMin - 1);
+	}
+	else if (i == otra.back()) {
+		trabajos.push_back(subpMin - 1);
+	}
+	else {
+		trabajos.push_back(i);
 	}
 
-	//Falta agreagar para ser impresos la cantidad de trabajos y el costo total.
+
+
+	//Se agregan la cantidad de trabajos y el costo total.
 	trabajos.push_back(trabajos.size());
 	trabajos.push_back(costoMin);
 
