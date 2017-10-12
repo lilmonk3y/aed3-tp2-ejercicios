@@ -32,9 +32,9 @@ int main(){
 		cout << endl;
 		for (int i = 0; i < n; i++)
 		{
-			delete costos[i];
+			delete[] costos[i];
 		}
-		delete costos;
+		delete[] costos;
 	}
 	return 0;
 }

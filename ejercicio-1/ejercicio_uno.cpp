@@ -17,9 +17,9 @@ vector<int> impresionesOrdenadas(int** costos, const int n)
 
 	for (int i = 0; i < n; i++)
 	{
-		delete subproblemas[i];
+		delete[] subproblemas[i];
 	}
-	delete subproblemas;
+	delete[] subproblemas;
 
 	return trabajos;
 }
