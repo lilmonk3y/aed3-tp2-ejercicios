@@ -6,6 +6,7 @@ int main(){
 	int n;
 	while (cin >> n)
 	{
+		//Se crea matriz de costos con memoria dinamica ya que no se conoce el tamaño en la compilacion.
 		int** costos = new int*[n];
 		for (int i = 0; i < n; i++)
 		{
@@ -22,6 +23,7 @@ int main(){
 		vector<int> out;
 		out = impresionesOrdenadas(costos, n);
 
+		//Imprimimos el resultado de la funcion de atras para adelante. Esta armado con todos los datos a ser impresos en el orden inverso.
 		while (!out.empty())
 		{
 			cout << out.back() << " ";
