@@ -90,7 +90,8 @@ vector<int> reconstruirSolucion(int** subproblemas, int** costos, const int n)
 		{
 			otra.push_back(subpMin - 1);
 		}
-		else if (i == otra.back()){
+		else if (i == otra.back())
+		{
 			trabajos.push_back(subpMin - 1);
 		}
 		else {
@@ -128,14 +129,15 @@ vector<int> reconstruirSolucion(int** subproblemas, int** costos, const int n)
 	{
 		otra.push_back(subpMin - 1);
 	}
-	else if (i == otra.back()) {
+	else if (i == otra.back()) 
+	{
 		trabajos.push_back(subpMin - 1);
 	}
 	else {
 		trabajos.push_back(i);
 	}
 
-
+	if (trabajos.back() == -1) trabajos.pop_back();
 
 	//Se agregan la cantidad de trabajos y el costo total.
 	trabajos.push_back(trabajos.size());
