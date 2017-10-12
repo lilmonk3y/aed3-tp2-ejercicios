@@ -14,12 +14,11 @@ struct paraElParser {
     list<Eje> rutas;
     int cantRutas;
     int fabricas;
-    int totalNodos;
+    int clientes;
 };
 
 
-
-bool existeFabrica(listaAdyacencia<int> lista, int fabricas, int n , int nodoInicial);
+bool existeFabrica(listaAdyacencia<int> & lista, int fabricas, int n , int nodoInicial);
 
 int conectandoClientes(int n, int fabricas, std::list<Eje> & edges) {
 
@@ -106,18 +105,15 @@ int conectandoClientes(int n, int fabricas, std::list<Eje> & edges) {
 
     }
 
-    cout << "El grafo resultante es: \n";
-    for(std::list<Eje>::iterator itEjes = uds.edges().begin(); itEjes != uds.edges().end(); itEjes++){
-        cout << "Eje: \n" << *itEjes << "\n";
-    }
+//    cout << "El grafo resultante es: \n";
+//    for(std::list<Eje>::iterator itEjes = uds.edges().begin(); itEjes != uds.edges().end(); itEjes++){
+//        cout << "Eje: \n" << *itEjes << "\n";
+//    }
     return costo;
 }
+//=========================AUXILIAR==========================
 
-
-
-
-
-bool existeFabrica(listaAdyacencia<int> lista, int fabricas, int n , int nodoInicial) {
+bool existeFabrica(listaAdyacencia<int> & lista, int fabricas, int n , int nodoInicial) {
     vector<bool> visitado(n+1); // Inicializado False −>vector<Bool>(N,False) ;
     int t;
     queue<int> cola;
@@ -141,25 +137,22 @@ bool existeFabrica(listaAdyacencia<int> lista, int fabricas, int n , int nodoIni
     return false;
 }
 
-
 paraElParser parser(){
 
-    int cantNodos = 0;
+    int clientes = 0;
     int fabricas = 0;
     int cantRutas = 0;
     paraElParser salida;
 
-    cin >> fabricas >> cantNodos >> cantRutas;
+    cin >> fabricas >> clientes >> cantRutas;
     // tomo los parametros F C R
-
 
     salida.cantRutas = cantRutas;
     salida.fabricas = fabricas;
-    salida.totalNodos = cantNodos;
+    salida.clientes = clientes;
 
     // me creo una lista para las rutas
     // cada lista sera una instancia del problema
-    list<Eje> rutas(cantRutas);
 
     int countLines = 0;
     int origen = 0;
@@ -172,94 +165,39 @@ paraElParser parser(){
         eje.origen = origen;
         eje.destino = destino;
         eje.peso = peso;
-        rutas.push_back(eje);
+        salida.rutas.push_back(eje);
         //agrego el eje a la lista de rutas
 
         countLines++;
     }
-
-    salida.rutas = rutas;
     return salida;
 }
 
 
-
 int main(){
 
-    Eje newEdge;
-    newEdge.destino = 3;
-    newEdge.origen = 1;
-    newEdge.peso = 7;
-    Eje newEdge1;
-    newEdge1.destino = 6;
-    newEdge1.origen = 1;
-    newEdge1.peso = 100;
-    Eje newEdge2;
-    newEdge2.destino = 5;
-    newEdge2.origen = 1;
-    newEdge2.peso = 3;
-    Eje newEdge3;
-    newEdge3.destino = 4;
-    newEdge3.origen = 3;
-    newEdge3.peso = 5;
-    Eje newEdge4;
-    newEdge4.destino = 5;
-    newEdge4.origen = 4;
-    newEdge4.peso = 2;
-    Eje newEdge5;
-    newEdge5.destino = 6;
-    newEdge5.origen = 5;
-    newEdge5.peso = 10;
-    // CC2
+   std::ifstream in("/home/reivaj/CLionProjects/AGMKruskalEj3/ejDeEntrada.txt");
+   std::streambuf *cinbuf = std::cin.rdbuf(); //save old buf
+   std::cin.rdbuf(in.rdbuf()); //redirect std::cin to in.txt!
 
-    Eje newEdge6;
-    newEdge6.destino = 7;
-    newEdge6.origen = 2;
-    newEdge6.peso = 4;
-    Eje newEdge7;
-    newEdge7.destino = 8;
-    newEdge7.origen = 2;
-    newEdge7.peso = 100;
-    Eje newEdge8;
-    newEdge8.destino = 10;
-    newEdge8.origen = 2;
-    newEdge8.peso = 10;
-    Eje newEdge9;
-    newEdge9.destino = 8;
-    newEdge9.origen = 10;
-    newEdge9.peso = 2;
-    Eje newEdge10;
-    newEdge10.destino = 9;
-    newEdge10.origen = 8;
-    newEdge10.peso = 50;
-    Eje newEdge11;
-    newEdge11.destino = 9;
-    newEdge11.origen = 10;
-    newEdge11.peso = 2;
-    Eje newEdge12;
-    newEdge12.destino = 11;
-    newEdge12.origen = 2;
-    newEdge12.peso = 5;
+   paraElParser miEntrada = parser();
+   int fabricas = miEntrada.fabricas;
+   int clientes = miEntrada.clientes;
 
-    std::list<Eje> newGraph;
-    newGraph.push_back(newEdge);
-    newGraph.push_back(newEdge1);
-    newGraph.push_back(newEdge2);
-    newGraph.push_back(newEdge3);
-    newGraph.push_back(newEdge4);
-    newGraph.push_back(newEdge5);
-    newGraph.push_back(newEdge6);
-    newGraph.push_back(newEdge7);
-    newGraph.push_back(newEdge8);
-    newGraph.push_back(newEdge9);
-    newGraph.push_back(newEdge10);
-    newGraph.push_back(newEdge11);
-    newGraph.push_back(newEdge12);
+//    std::ofstream out("/home/reivaj/CLionProjects/AGMKruskalEj3/grafoAleatorio.txt");
+//    std::streambuf *coutbuf = std::cout.rdbuf(); //save old buf
+//    std::cout.rdbuf(out.rdbuf()); //redirect std::cin to in.txt!
 
-    cout << conectandoClientes(11, 2, newGraph) << endl;
+//
 
-    //paraElParser miEntrada = parser();
+//
+//    std::cout.rdbuf(coutbuf); //reset to standard output again
 
+
+
+//    cout << conectandoClientes(fabricas+clientes, fabricas, miEntrada.rutas) << endl;
+//
+//    std::cin.rdbuf(cinbuf);   //reset to standard input again
 
 
 }
