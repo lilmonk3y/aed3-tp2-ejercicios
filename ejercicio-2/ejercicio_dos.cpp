@@ -35,7 +35,7 @@ struct grafo_parametro crear_instancia_del_problema_sin_cantidad_servidores()
 	int cantidad_servidores;
 	cin >> cantidad_servidores;
 
-	
+
 	int cantidad_enlaces;
 	cin >> cantidad_enlaces;
 
@@ -85,6 +85,13 @@ struct grafo_parametro crear_instancia_del_problema(int cantidad_servidores)
 	nueva_instancia.lista_adyacencias = lista_de_adyacencias;
 	nueva_instancia.lista_pesos = lista_de_pesos;
 	return nueva_instancia;
+}
+
+bool exite_arista_entre_y_tiene_peso(struct grafo_parametro grafo, int nodo_uno, int nodo_dos, int peso_arista)
+{
+	bool respuesta = false;
+	//iterar los elementos adyacentes a nodo_uno y decirme si nodo_dos pertenece.
+	assert ( DEBO_IMPLEMENTAR );
 }
 
 void resolver_problema_e_imprimir_solucion(struct grafo_parametro grafo_input)
