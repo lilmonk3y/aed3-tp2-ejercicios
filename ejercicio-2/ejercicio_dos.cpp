@@ -4,9 +4,97 @@
 #define NO_VISITADO 0
 #define DEBO_IMPLEMENTAR false
 
-/*           dos.uno              */
+/*                  main y parsers                */
 
-//Faltan los parser para tomar la entrada.
+void func_main()
+{
+	int cantidad_servidores;
+	while( hay_entrada(cantidad_servidores) )
+	{
+		struct grafo_parametro grafo_input;
+		grafo_input = crear_instancia_del_problema(cantidad_servidores);
+		resolver_problema_e_imprimir_solucion(grafo_input);
+	}
+	return;
+}
+
+bool hay_entrada(int &primer_numero)
+{
+	cin >> primer_numero;
+	bool respuesta;
+	if(primer_numero == 0)
+		respuesta = false;
+	else
+		respuesta = true;
+	return respuesta;
+}
+
+// Función temporal
+struct grafo_parametro crear_instancia_del_problema_sin_cantidad_servidores()
+{
+	int cantidad_servidores;
+	cin >> cantidad_servidores;
+
+	
+	int cantidad_enlaces;
+	cin >> cantidad_enlaces;
+
+	struct grafo_parametro nueva_instancia;
+	vector<list<int> > lista_de_adyacencias;
+	vector<list<int> > lista_de_pesos;
+	for( int indice = 0; indice < cantidad_enlaces; indice++)
+	{
+		int nodo_uno, nodo_dos, peso_arista;
+		cin >> nodo_uno;
+		cin >> nodo_dos;
+		cin >> peso_arista;
+
+		lista_de_adyacencias.at(nodo_uno).push_back(nodo_dos);
+		lista_de_pesos.at(nodo_uno).push_back(nodo_dos);
+
+		lista_de_adyacencias.at(nodo_dos).push_back(nodo_uno);
+		lista_de_pesos.at(nodo_dos).push_back(nodo_uno);
+	}
+	nueva_instancia.lista_adyacencias = lista_de_adyacencias;
+	nueva_instancia.lista_pesos = lista_de_pesos;
+	return nueva_instancia;
+}
+
+
+struct grafo_parametro crear_instancia_del_problema(int cantidad_servidores)
+{
+	int cantidad_enlaces;
+	cin >> cantidad_enlaces;
+
+	struct grafo_parametro nueva_instancia;
+	vector<list<int> > lista_de_adyacencias;
+	vector<list<int> > lista_de_pesos;
+	for( int indice = 0; indice < cantidad_enlaces; indice++)
+	{
+		int nodo_uno, nodo_dos, peso_arista;
+		cin >> nodo_uno;
+		cin >> nodo_dos;
+		cin >> peso_arista;
+
+		lista_de_adyacencias.at(nodo_uno).push_back(nodo_dos);
+		lista_de_pesos.at(nodo_uno).push_back(nodo_dos);
+
+		lista_de_adyacencias.at(nodo_dos).push_back(nodo_uno);
+		lista_de_pesos.at(nodo_dos).push_back(nodo_uno);
+	}
+	nueva_instancia.lista_adyacencias = lista_de_adyacencias;
+	nueva_instancia.lista_pesos = lista_de_pesos;
+	return nueva_instancia;
+}
+
+void resolver_problema_e_imprimir_solucion(struct grafo_parametro grafo_input)
+{
+	assert( DEBO_IMPLEMENTAR );
+
+	return;
+}
+
+/*           dos.uno              */
 
 class grafo_resultado crear_agm_para(struct grafo_parametro grafo_entrada)
 {
@@ -83,16 +171,19 @@ struct arista grafo_resultado::minima_arista_que_no_forma_ciclos()
 
 void grafo_resultado::agregar_aristas_adyacentes_a(int nodo_actual, grafo_parametro &grafo_entrada)
 {
-  for(int indice = 0; indice < grafo_entrada.lista_adyacencias.at(nodo_actual).size(); indice++)
-  {
-    int nodo_indice = grafo_entrada.lista_adyacencias.at(nodo_actual).at(indice);
-    if( visitados.at(nodo_indice) == VISITADO) continue;
-    struct arista una_arista;
-    una_arista.un_nodo = nodo_actual;
-    una_arista.otro_nodo = grafo_entrada.lista_adyacencias.at(nodo_actual).at(indice);
-    una_arista.peso = grafo_entrada.lista_pesos.at(nodo_actual).at(indice);
-    aristas_a_elegir.push(una_arista);
-  }
+	// 		ARREGLAR YA QUE ANTES LO IMPLEMENTE CON VECTOR DE VECTOR Y AHORA ES VECTOR DE LISTAS
+
+  // for(int indice = 0; indice < grafo_entrada.lista_adyacencias.at(nodo_actual).size(); indice++)
+  // {
+  //   int nodo_indice = grafo_entrada.lista_adyacencias.at(nodo_actual).at(indice);
+  //   if( visitados.at(nodo_indice) == VISITADO) continue;
+  //   struct arista una_arista;
+  //   una_arista.un_nodo = nodo_actual;
+  //   una_arista.otro_nodo = grafo_entrada.lista_adyacencias.at(nodo_actual).at(indice);
+  //   una_arista.peso = grafo_entrada.lista_pesos.at(nodo_actual).at(indice);
+  //   aristas_a_elegir.push(una_arista);
+  // }
+
   return;
 }
 
@@ -105,18 +196,9 @@ bool visite_todos_los_nodos(vector<int> visitados)
   return true;
 }
 
-
-
-
-
-
-
-
-
-
-
 /*            dos.dos           */
-int elegir_master(vector<vector<int> > lista_adyacencias)
+
+int elegir_master(vector<list<int> > lista_adyacencias)
 {
   //Elijo un nodo aleatorio y lo llamo "s"
   int nodo_s = 0;
@@ -125,13 +207,13 @@ int elegir_master(vector<vector<int> > lista_adyacencias)
   return elegir_nodo_intermedio_entre(nodo_v, nodo_w, lista_adyacencias);
 }
 
-int nodo_mas_lejano_a(int nodo_origen, vector<vector<int> > lista_adyacencias)
+int nodo_mas_lejano_a(int nodo_origen, vector<list<int> > lista_adyacencias)
 {
   vector<int> distancias = distancias_de_un_nodo_a_todos_los_demas(nodo_origen,lista_adyacencias);
   return indice_del_maximo_de(distancias);
 }
 
-int elegir_nodo_intermedio_entre(int nodo_origen, int nodo_destino, vector<vector<int> > lista_adyacencias)
+int elegir_nodo_intermedio_entre(int nodo_origen, int nodo_destino, vector<list<int> > lista_adyacencias)
 {
   /* La idea es que el nodo_origen es el de distancia 0 y el nodo_destino es
   el de distancia maxima pero todos en el medio existen, osea que yo elijo a
@@ -166,25 +248,27 @@ int elegir_nodo_intermedio_entre(int nodo_origen, int nodo_destino, vector<vecto
 
 bool aux_elegir_nodo_intermedio_entre(int nivel, struct camino_entre_dos_nodos &parametros)
 {
+	// 		ARREGLAR YA QUE ANTES LO IMPLEMENTE CON VECTOR DE VECTOR Y AHORA ES VECTOR DE LISTAS
+
   bool respuesta = false;
 
-  if(parametros.visitados.at(nivel) == VISITADO) return respuesta;
-
-  parametros.visitados.at(nivel) = VISITADO;
-  if(nivel == parametros.nodo_destino)
-  {
-    respuesta = true;
-    parametros.camino.push_back(nivel);
-  }else{
-    int adyacente;
-    for(int un_adyacente; un_adyacente < parametros.lista_adyacencias.at(nivel).at(un_adyacente); un_adyacente++)
-    {
-      adyacente = parametros.lista_adyacencias.at(nivel).at(un_adyacente);
-      respuesta = aux_elegir_nodo_intermedio_entre(adyacente, parametros);
-      if(respuesta) break;
-    }
-    if(respuesta) parametros.camino.push_back(nivel);
-  }
+  // if(parametros.visitados.at(nivel) == VISITADO) return respuesta;
+  //
+  // parametros.visitados.at(nivel) = VISITADO;
+  // if(nivel == parametros.nodo_destino)
+  // {
+  //   respuesta = true;
+  //   parametros.camino.push_back(nivel);
+  // }else{
+  //   int adyacente;
+  //   for(int un_adyacente; un_adyacente < parametros.lista_adyacencias.at(nivel).at(un_adyacente); un_adyacente++)
+  //   {
+  //     adyacente = parametros.lista_adyacencias.at(nivel).at(un_adyacente);
+  //     respuesta = aux_elegir_nodo_intermedio_entre(adyacente, parametros);
+  //     if(respuesta) break;
+  //   }
+  //   if(respuesta) parametros.camino.push_back(nivel);
+  // }
   return respuesta;
 }
 
@@ -196,8 +280,12 @@ int nodo_cuya_distancia_es_igual_a( int valor_a_buscado, vector<int> &distancias
   assert( false ); /* NO DEBO LLEGAR ACÁ PORQUE EL ELEMENTO QUE BUSCO EXISTE */
 }
 
-vector<int> distancias_de_un_nodo_a_todos_los_demas(int nodo_origen, vector<vector<int> > lista_adyacencias)
+vector<int> distancias_de_un_nodo_a_todos_los_demas(int nodo_origen, vector<list<int> > lista_adyacencias)
 {
+	// ARREGLAR PORQUE ANTES ERA UN VECTOR DE VECTOR Y AHORA ES UN VECTOR DE LISTAS;
+
+
+
   /*Elijo un enfoque BFS para encontrar el nodo más lejano a nodo_origen */
   vector<int> elementos_visitados;
   inicializar_vector_con( 0, elementos_visitados , lista_adyacencias.size() );
@@ -205,24 +293,24 @@ vector<int> distancias_de_un_nodo_a_todos_los_demas(int nodo_origen, vector<vect
   inicializar_vector_con( INFINITO, distancias, lista_adyacencias.size() );
   queue<int> cola;
 
-  cola.push(nodo_origen);
-  elementos_visitados.at(nodo_origen) = VISITADO;
-  distancias.at(nodo_origen) = 0;
-  while( not cola.empty() ){
-    int un_nodo = cola.front();
-    cola.pop();
-    int adyacente_a_un_nodo;
-    for(int un_adyacente = 0; un_adyacente < lista_adyacencias.at(un_nodo).size(); un_adyacente++)
-    {
-      adyacente_a_un_nodo = lista_adyacencias.at(un_nodo).at(un_adyacente);
-      if( elementos_visitados.at(adyacente_a_un_nodo) == NO_VISITADO )
-      {
-        elementos_visitados.at(adyacente_a_un_nodo) = VISITADO;
-        distancias.at(adyacente_a_un_nodo) = distancias.at(un_nodo) + 1;
-        cola.push(adyacente_a_un_nodo);
-      }
-    } /* ya mire todos los adyacentes a un_nodo */
-  } /* ya mire todos los nodos del arbol */
+  // cola.push(nodo_origen);
+  // elementos_visitados.at(nodo_origen) = VISITADO;
+  // distancias.at(nodo_origen) = 0;
+  // while( not cola.empty() ){
+  //   int un_nodo = cola.front();
+  //   cola.pop();
+  //   int adyacente_a_un_nodo;
+  //   for(int un_adyacente = 0; un_adyacente < lista_adyacencias.at(un_nodo).size(); un_adyacente++)
+  //   {
+  //     adyacente_a_un_nodo = lista_adyacencias.at(un_nodo).at(un_adyacente);
+  //     if( elementos_visitados.at(adyacente_a_un_nodo) == NO_VISITADO )
+  //     {
+  //       elementos_visitados.at(adyacente_a_un_nodo) = VISITADO;
+  //       distancias.at(adyacente_a_un_nodo) = distancias.at(un_nodo) + 1;
+  //       cola.push(adyacente_a_un_nodo);
+  //     }
+  //   } /* ya mire todos los adyacentes a un_nodo */
+  // } /* ya mire todos los nodos del arbol */
   return distancias;
 }
 
