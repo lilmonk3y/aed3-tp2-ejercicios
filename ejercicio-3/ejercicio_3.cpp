@@ -10,6 +10,7 @@
 #include <queue>
 
 
+
 struct paraElParser {
     list<Eje> rutas;
     int cantRutas;
@@ -18,9 +19,17 @@ struct paraElParser {
 };
 
 
+struct paraSalida {
+    list<int> rutasFinal;
+    int cantRutasNecesarias;
+    int costo;
+};
+
+//Del problema original
+
 bool existeFabrica(listaAdyacencia<int> & lista, int fabricas, int n , int nodoInicial);
 
-int conectandoClientes(int n, int fabricas, std::list<Eje> & edges) {
+paraSalida conectandoClientes(int n, int fabricas, std::list<Eje> & edges) {
 
     DisjointSet uds(n+1);
 
@@ -105,11 +114,24 @@ int conectandoClientes(int n, int fabricas, std::list<Eje> & edges) {
 
     }
 
+    //preparo la salida
+    paraSalida salida;
+    salida.costo = costo;
+    salida.cantRutasNecesarias = uds.edges().size();
+
+    for(std::list<Eje>::iterator itEjes = uds.edges().begin(); itEjes != uds.edges().end(); itEjes++){
+        Eje eje = *itEjes;
+        salida.rutasFinal.push_back(eje.origen);
+        salida.rutasFinal.push_back(eje.destino);
+    }
 //    cout << "El grafo resultante es: \n";
-//    for(std::list<Eje>::iterator itEjes = uds.edges().begin(); itEjes != uds.edges().end(); itEjes++){
-//        cout << "Eje: \n" << *itEjes << "\n";
+//    for(std::list<int>::iterator itEjes = salida.rutasFinal.begin(); itEjes != salida.rutasFinal.end(); itEjes++){
+//        cout << "Eje: \n" << *itEjes << " -> ";
+//        itEjes++;
+//        cout << *itEjes <<"\n";
 //    }
-    return costo;
+
+    return salida;
 }
 //=========================AUXILIAR==========================
 
@@ -175,14 +197,24 @@ paraElParser parser(){
 
 
 int main(){
-
-   std::ifstream in("/home/reivaj/CLionProjects/AGMKruskalEj3/ejDeEntrada.txt");
-   std::streambuf *cinbuf = std::cin.rdbuf(); //save old buf
-   std::cin.rdbuf(in.rdbuf()); //redirect std::cin to in.txt!
+// Estas tres lineas las usaba para el INPUT
+   // std::ifstream in("/home/reivaj/CLionProjects/AGMKruskalEj3/ejDeEntrada.txt");
+   // std::streambuf *cinbuf = std::cin.rdbuf(); //save old buf
+   // std::cin.rdbuf(in.rdbuf()); //redirect std::cin to in.txt!
 
    paraElParser miEntrada = parser();
    int fabricas = miEntrada.fabricas;
    int clientes = miEntrada.clientes;
+
+   paraSalida miSalida = conectandoClientes(fabricas+clientes, fabricas, miEntrada.rutas);
+   cout << miSalida.costo << " " << miSalida.cantRutasNecesarias;
+
+   for(std::list<int>::iterator itEjes = miSalida.rutasFinal.begin(); itEjes != miSalida.rutasFinal.end(); itEjes++){
+       cout << " " << *itEjes;
+       itEjes++;
+       cout << " " << *itEjes;
+   }
+
 
 //    std::ofstream out("/home/reivaj/CLionProjects/AGMKruskalEj3/grafoAleatorio.txt");
 //    std::streambuf *coutbuf = std::cout.rdbuf(); //save old buf
