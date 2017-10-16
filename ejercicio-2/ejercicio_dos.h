@@ -1,4 +1,5 @@
 #include <vector> /* VECTOR OPERATIONS */
+#include <list> /* LIST OPERATIONS */
 #include <iostream> /* COUT, ENDL */
 #include <climits> /* INT_MAX, INT_MIN */
 #include <queue>  /* queue, priority_queue */
@@ -6,10 +7,18 @@
 
 using namespace std;
 
+/*                  main y parsers                */
+void func_main();
+bool hay_entrada(int &primer_numero);
+// Función temporal
+struct grafo_parametro crear_instancia_del_problema_sin_cantidad_servidores();
+struct grafo_parametro crear_instancia_del_problema(int entrada);
+void resolver_problema_e_imprimir_solucion(struct grafo_parametro grafo_input);
+
 /* dos.uno */
 struct grafo_parametro{
-  vector<vector<int> > lista_adyacencias;
-  vector<vector<int> > lista_pesos;
+  vector<list<int> > lista_adyacencias;
+  vector<list<int> > lista_pesos;
 };
 
 struct arista{
@@ -46,7 +55,7 @@ class grafo_resultado{
     /* variables de clase*/
     priority_queue<struct arista, vector<struct arista >, comparador_de_aristas> aristas_a_elegir;
     vector<int> visitados;
-    vector<vector<int> > lista_adyacencias_agm;
+    vector<list<int> > lista_adyacencias_agm;
     int peso_total;
 };
 
@@ -58,20 +67,20 @@ bool visite_todos_los_nodos(vector<int> visitados);
 
 /* dos.dos */
 
-int elegir_master(vector<vector<int> > lista_adyacencias);
-int nodo_mas_lejano_a(int nodo_origen, vector<vector<int> > lista_adyacencias);
-int elegir_nodo_intermedio_entre(int nodo_origen, int nodo_destino, vector<vector<int> > lista_adyacencias);
+int elegir_master(vector<list<int> > lista_adyacencias);
+int nodo_mas_lejano_a(int nodo_origen, vector<list<int> > lista_adyacencias);
+int elegir_nodo_intermedio_entre(int nodo_origen, int nodo_destino, vector<list<int> > lista_adyacencias);
 void inicializar_vector_con(int inicializador, vector<int> &un_vector, int mi_size);
 int indice_del_maximo_de(vector<int> &distancias);
 int indice_del_minimo_de(vector<int> &distancias);
 int nodo_cuya_distancia_es_igual_a( int valor_a_buscado, vector<int> &distancias);
-vector<int> distancias_de_un_nodo_a_todos_los_demas(int nodo_origen, vector<vector<int> > lista_adyacencias);
+vector<int> distancias_de_un_nodo_a_todos_los_demas(int nodo_origen, vector<list<int> > lista_adyacencias);
 int maximo_valor_de(vector<int> &distancias);
 
 struct camino_entre_dos_nodos{
   int nodo_origen;
   int nodo_destino;
-  vector<vector<int> > lista_adyacencias;
+  vector<list<int> > lista_adyacencias;
   vector<int> camino;
   vector<int> visitados;
 };

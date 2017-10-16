@@ -2,5 +2,6 @@
 
 int main()
 {
+	func_main();
   return 0;
 }
