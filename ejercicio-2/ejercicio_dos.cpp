@@ -1,16 +1,6 @@
 #include "ejercicio_dos.h"
-#define INFINITO INT_MAX
-#define VISITADO 1
-#define NO_VISITADO 0
-#define DEBO_IMPLEMENTAR false
 
-
-/* YA ESTOY EN CONDICIONES DE TESTEAR LA FUNCION crear_agm. TENGO QUE CREAR
-GRAFOS PARA VERIFICAR LOS RESULTADOS QUE ME DÉ LA FUNCION */
-
-
-
-/*                  main y parsers                */
+/*----------------------------------MAIN--------------------------------------*/
 
 void func_main()
 {
@@ -24,18 +14,43 @@ void func_main()
 		class grafo_generador_minimo grafo_output;
 		grafo_output.crear_agm(grafo_input);
 		int peso_grafo_output = grafo_output.peso_agm;
-		cout<<endl; cout<< "El peso del grafo generado es: "<< grafo_output.peso_agm <<endl; cout<<endl;
+		// cout<<endl; cout<< "El peso del grafo generado es: "<< grafo_output.peso_agm <<endl; cout<<endl;
 		// sub-problema-dos
 		int nodo_master = grafo_output.elegir_master();
-		cout<<endl; cout<< "El master del grafo generado es: "<< nodo_master <<endl; cout<<endl;
-
-		// // output
-		// grafo_output.imprimir_solucion(peso_grafo_output, nodo_master);
+		// cout<<endl; cout<< "El master del grafo generado es: "<< nodo_master <<endl; cout<<endl;
+		// output
+		grafo_output.imprimir_solucion(peso_grafo_output, nodo_master);
 	}
 	return;
 }
 
+void grafo_generador_minimo::crear_agm(grafo_lista_adyacencias grafo_input)
+{
+	/* El AGM lo hago con el enfoque de PRIM */
 
+	// init grafo_generador_minimo
+	peso_agm = 0;
+	lista_adyacencias.resize( grafo_input.lista_adyacencias.size() );
+  inicializar_vector_con(NO_VISITADO, visitados, grafo_input.lista_adyacencias.size());
+
+  /* Empiezo con el nodo 1 */
+  int nodo_actual = 1;
+  int cantidad_nodos_visitados = 0;
+	struct arista una_arista;
+  while( cantidad_nodos_visitados < (grafo_input.lista_adyacencias.size() - 2 ) )
+  {
+    if( not visite_a(nodo_actual) )
+    {
+      visitados.at(nodo_actual) = VISITADO;
+      cantidad_nodos_visitados++;
+      agregar_aristas_adyacentes_a(nodo_actual, grafo_input);
+    }
+    una_arista = minima_arista_que_no_forma_ciclos();
+    agregar_arista_al_agm(una_arista);
+    nodo_actual = nodo_que_no_visite(una_arista);
+  }
+  return;
+}
 
 int grafo_generador_minimo::elegir_master()
 {
@@ -85,31 +100,6 @@ vector<int> grafo_generador_minimo::distancias_de_un_nodo_a_todos_los_demas(int 
   return distancias;
 }
 
-NODO grafo_generador_minimo::elegir_nodo_intermedio_entre(int nodo_origen, int nodo_destino)
-{
-	/* IDEA: reconstruyo el camino entre nodo_origen y nodo_destino y el nodo que
-	esté en el medio es el nodo que debo entregar. */
-
-	/* init */
-  vector<NODO> camino;
-
-  vector<NODO> visitados;
-	visitados.resize(lista_adyacencias.size());
-  inicializar_vector_con(NO_VISITADO ,visitados, lista_adyacencias.size());
-
-  class camino_entre_dos_nodos diagonal_agm;
-  diagonal_agm.nodo_origen = nodo_origen;
-  diagonal_agm.nodo_destino = nodo_destino;
-  diagonal_agm.lista_adyacencias = lista_adyacencias;
-  diagonal_agm.camino = camino;
-  diagonal_agm.visitados = visitados;
-
-	/* construyo la diagonal desde una punta a la otra con este algoritmo recursivo */
-  diagonal_agm.construir_diagonal(nodo_origen);
-  int nodo_master = diagonal_agm.camino.at( ((int) diagonal_agm.camino.size() / 2) );
-  return nodo_master;
-}
-
 bool camino_entre_dos_nodos::construir_diagonal(int nodo_actual)
 {
 	if(visitados.at(nodo_actual) == VISITADO) return false;
@@ -137,65 +127,75 @@ bool camino_entre_dos_nodos::construir_diagonal(int nodo_actual)
 
 
 
+/*------------------------------AUXILIARES------------------------------------*/
+
+void grafo_lista_adyacencias::crear_instancia_del_problema(int cantidad_servidores)
+{
+	int cantidad_enlaces;
+	cin >> cantidad_enlaces;
+
+	lista_adyacencias.resize(cantidad_servidores + 1);
+
+	for( int indice = 0; indice < cantidad_enlaces; indice++)
+	{
+		int nodo_uno, nodo_dos, peso_arista;
+		cin >> nodo_uno;
+		cin >> nodo_dos;
+		cin >> peso_arista;
+
+		pair<NODO,PESO> una_arista(nodo_dos, peso_arista);
+		lista_adyacencias.at(nodo_uno).push_back(una_arista);
+
+		pair<NODO,PESO> misma_arista(nodo_uno, peso_arista);
+		lista_adyacencias.at(nodo_dos).push_back(misma_arista);
+	}
+	return;
+}
+
 void grafo_generador_minimo::imprimir_solucion(int peso_grafo, int nodo_master)
 {
-	assert( DEBO_IMPLEMENTAR );
+	cout << peso_grafo << " " << nodo_master << " " << aristas_agm_imprimir.size();
+	auto it = aristas_agm_imprimir.cbegin();
+	auto it_final = aristas_agm_imprimir.cend();
+	struct arista una_arista;
+	NODO un_nodo;
+	NODO otro_nodo;
+	for(it; it != it_final; ++it )
+	{
+		una_arista = (*it);
+		un_nodo = una_arista.un_nodo;
+		otro_nodo = una_arista.otro_nodo;
+		cout << " " << un_nodo << " " << otro_nodo;
+	}
+	cout << endl;
 
 	return;
 }
 
+NODO grafo_generador_minimo::elegir_nodo_intermedio_entre(int nodo_origen, int nodo_destino)
+{
+	/* IDEA: reconstruyo el camino entre nodo_origen y nodo_destino y el nodo que
+	esté en el medio es el nodo que debo entregar. */
 
+	/* init */
+  vector<NODO> camino;
 
+  vector<NODO> visitados;
+	visitados.resize(lista_adyacencias.size());
+  inicializar_vector_con(NO_VISITADO ,visitados, lista_adyacencias.size());
 
+  class camino_entre_dos_nodos diagonal_agm;
+  diagonal_agm.nodo_origen = nodo_origen;
+  diagonal_agm.nodo_destino = nodo_destino;
+  diagonal_agm.lista_adyacencias = lista_adyacencias;
+  diagonal_agm.camino = camino;
+  diagonal_agm.visitados = visitados;
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-/*------------------------------------ Revisadas  ----------------------------*/
+	/* construyo la diagonal desde una punta a la otra con este algoritmo recursivo */
+  diagonal_agm.construir_diagonal(nodo_origen);
+  int nodo_master = diagonal_agm.camino.at( ((int) diagonal_agm.camino.size() / 2) );
+  return nodo_master;
+}
 
 int indice_del_minimo_de(vector<NODO> &distancias)
 {
@@ -213,34 +213,6 @@ int indice_del_maximo_de(vector<NODO> &distancias)
     if( distancias.at(indice_maximo) < distancias.at(indice) ) indice_maximo = indice;
 
   return indice_maximo;
-}
-
-void grafo_generador_minimo::crear_agm(grafo_lista_adyacencias grafo_input)
-{
-	/* El AGM lo hago con el enfoque de PRIM */
-
-	// init grafo_generador_minimo
-	peso_agm = 0;
-	lista_adyacencias.resize( grafo_input.lista_adyacencias.size() );
-  inicializar_vector_con(NO_VISITADO, visitados, grafo_input.lista_adyacencias.size());
-
-  /* Empiezo con el nodo 1 */
-  int nodo_actual = 1;
-  int cantidad_nodos_visitados = 0;
-	struct arista una_arista;
-  while( cantidad_nodos_visitados < (grafo_input.lista_adyacencias.size() - 2 ) )
-  {
-    if( not visite_a(nodo_actual) )
-    {
-      visitados.at(nodo_actual) = VISITADO;
-      cantidad_nodos_visitados++;
-      agregar_aristas_adyacentes_a(nodo_actual, grafo_input);
-    }
-    una_arista = minima_arista_que_no_forma_ciclos();
-    agregar_arista_al_agm(una_arista);
-    nodo_actual = nodo_que_no_visite(una_arista);
-  }
-  return;
 }
 
 int grafo_generador_minimo::nodo_que_no_visite(struct arista una_arista)
@@ -300,7 +272,6 @@ bool grafo_generador_minimo::visite_a(struct arista una_arista)
 void grafo_generador_minimo::agregar_aristas_adyacentes_a(int nodo_actual,
 	class grafo_lista_adyacencias  &grafo_input)
 {
-
 	auto it = grafo_input.lista_adyacencias.at(nodo_actual).cbegin();
 	auto it_final = grafo_input.lista_adyacencias.at(nodo_actual).cend();
 	for(it; it != it_final; ++it )
@@ -346,31 +317,7 @@ bool hay_entrada(int &primer_numero)
 	return respuesta;
 }
 
-void grafo_lista_adyacencias::crear_instancia_del_problema(int cantidad_servidores)
-{
-	int cantidad_enlaces;
-	cin >> cantidad_enlaces;
 
-	lista_adyacencias.resize(cantidad_servidores + 1);
-
-
-	for( int indice = 0; indice < cantidad_enlaces; indice++)
-	{
-		int nodo_uno, nodo_dos, peso_arista;
-		cin >> nodo_uno;
-		cin >> nodo_dos;
-		cin >> peso_arista;
-
-		pair<NODO,PESO> una_arista(nodo_dos, peso_arista);
-		lista_adyacencias.at(nodo_uno).push_back(una_arista);
-
-		pair<NODO,PESO> misma_arista(nodo_uno, peso_arista);
-		lista_adyacencias.at(nodo_dos).push_back(misma_arista);
-
-	}
-
-	return;
-}
 
 bool grafo_lista_adyacencias::existe_arista_entre_nodos(int nodo_uno, int nodo_dos, int peso_arista)
 {

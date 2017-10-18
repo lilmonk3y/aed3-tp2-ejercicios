@@ -8,6 +8,10 @@
 
 #define NODO int
 #define PESO int
+#define INFINITO INT_MAX
+#define VISITADO 1
+#define NO_VISITADO 0
+#define DEBO_IMPLEMENTAR false
 
 using namespace std;
 
@@ -72,9 +76,8 @@ class grafo_generador_minimo{
     priority_queue<struct arista, vector<struct arista >, comparador_de_aristas> aristas_a_elegir;
     vector<int> visitados;
     vector<list<pair<NODO, PESO> > > lista_adyacencias;
-
-    int peso_agm;
     // solo tengo esto para hacerlo más sencillo de imprimir.
+    int peso_agm;
     vector<struct arista> aristas_agm_imprimir;
 
 };
