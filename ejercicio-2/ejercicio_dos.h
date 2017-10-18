@@ -11,13 +11,13 @@
 
 using namespace std;
 
-/*                  main y parsers                */
-void func_main();
-bool hay_entrada(int &primer_numero);
 
+
+void func_main();
 
 class grafo_lista_adyacencias{
   public:
+    //el vector tiene n + 1 posiciones. la posición 0 no es válida.
     vector<list<pair<NODO, PESO> > > lista_adyacencias;
 
     void crear_instancia_del_problema(int entrada);
@@ -43,7 +43,7 @@ struct arista{
 struct comparador_de_aristas{
   bool operator()(arista &a1, arista &a2)
   {
-    return a1.peso < a2.peso;
+    return a1.peso > a2.peso;
   }
 };
 
@@ -53,7 +53,6 @@ class grafo_generador_minimo{
 
     /* principales */
     void crear_agm(grafo_lista_adyacencias grafo_input);
-    int peso();
     int elegir_master();
     void imprimir_solucion(int peso_grafo, int nodo_master);
 
@@ -74,27 +73,34 @@ class grafo_generador_minimo{
     vector<int> visitados;
     vector<list<pair<NODO, PESO> > > lista_adyacencias;
 
+    int peso_agm;
+    // solo tengo esto para hacerlo más sencillo de imprimir.
+    vector<struct arista> aristas_agm_imprimir;
+
 };
 
-bool visite_todos_los_nodos(vector<int> visitados);
+class camino_entre_dos_nodos{
+  public:
+    /* METODOS DE LA CLASE */
+    bool construir_diagonal(int nodo_origen);
+
+    /* COLABORADORES INTERNOS */
+    NODO nodo_origen;
+    NODO nodo_destino;
+    vector<list<pair<NODO,PESO> > > lista_adyacencias;
+    vector<NODO> camino;
+    vector<NODO> visitados;
+};
+
+NODO indice_del_maximo_de(vector<int> &distancias);
+NODO indice_del_minimo_de(vector<int> &distancias);
+NODO nodo_cuya_distancia_es_igual_a( NODO valor_a_buscado, vector<int> &distancias);
 
 
 
 
-/* dos.dos */
+/* AUXILIARES */
 
-
+bool hay_entrada(int &primer_numero);
 void inicializar_vector_con(int inicializador, vector<int> &un_vector, int mi_size);
-int indice_del_maximo_de(vector<int> &distancias);
-int indice_del_minimo_de(vector<int> &distancias);
-int nodo_cuya_distancia_es_igual_a( int valor_a_buscado, vector<int> &distancias);
-int maximo_valor_de(vector<int> &distancias);
-
-struct camino_entre_dos_nodos{
-  int nodo_origen;
-  int nodo_destino;
-  vector<list<int> > lista_adyacencias;
-  vector<int> camino;
-  vector<int> visitados;
-};
-bool aux_elegir_nodo_intermedio_entre(int nivel, struct camino_entre_dos_nodos &parametros);
+bool visite_todos_los_nodos(vector<int> visitados);

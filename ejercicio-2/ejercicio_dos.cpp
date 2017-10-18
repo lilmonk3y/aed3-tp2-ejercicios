@@ -23,57 +23,119 @@ void func_main()
 		// sub-problema-uno
 		class grafo_generador_minimo grafo_output;
 		grafo_output.crear_agm(grafo_input);
-		int peso_grafo_output = grafo_output.peso();
+		int peso_grafo_output = grafo_output.peso_agm;
+		cout<<endl; cout<< "El peso del grafo generado es: "<< grafo_output.peso_agm <<endl; cout<<endl;
 		// sub-problema-dos
 		int nodo_master = grafo_output.elegir_master();
-		// output
-		grafo_output.imprimir_solucion(peso_grafo_output, nodo_master);
+		cout<<endl; cout<< "El master del grafo generado es: "<< nodo_master <<endl; cout<<endl;
+
+		// // output
+		// grafo_output.imprimir_solucion(peso_grafo_output, nodo_master);
 	}
 	return;
 }
 
-void grafo_generador_minimo::crear_agm(grafo_lista_adyacencias grafo_input)
-{
-	/* El AGM lo hago con el enfoque de PRIM */
 
-	// init grafo_generador_minimo
-  inicializar_vector_con(NO_VISITADO, visitados, grafo_input.lista_adyacencias.size());
-
-  /* Empiezo con el nodo 0 */
-  int nodo_actual = 0;
-  int cantidad_nodos_visitados = 0;
-  while( cantidad_nodos_visitados < grafo_input.lista_adyacencias.size() )
-  {
-    if( not visite_a(nodo_actual) )
-    {
-      visitados.at(nodo_actual) = VISITADO;
-      cantidad_nodos_visitados++;
-      agregar_aristas_adyacentes_a(nodo_actual, grafo_input);
-    }
-    struct arista una_arista = minima_arista_que_no_forma_ciclos();
-    agregar_arista_al_agm(una_arista);
-    nodo_actual = nodo_que_no_visite(una_arista);
-  }
-
-  assert( visite_todos_los_nodos(visitados) );
-  return;
-}
-
-int grafo_generador_minimo::peso()
-{
-	assert( DEBO_IMPLEMENTAR );
-
-	return 0;
-}
 
 int grafo_generador_minimo::elegir_master()
 {
-	//Elijo un nodo aleatorio y lo llamo "s"
-  int nodo_s = 0;
+	//Elijo un nodo cualquiera, pero para simplificar empiezo por el 1 y lo llamo "s"
+  int nodo_s = 1;
   int nodo_v = nodo_mas_lejano_a(nodo_s);
   int nodo_w = nodo_mas_lejano_a(nodo_v);
   return elegir_nodo_intermedio_entre(nodo_v, nodo_w);
 }
+
+int grafo_generador_minimo::nodo_mas_lejano_a(int nodo_origen)
+{
+  vector<int> distancias = distancias_de_un_nodo_a_todos_los_demas(nodo_origen);
+  return indice_del_maximo_de(distancias);
+}
+
+vector<int> grafo_generador_minimo::distancias_de_un_nodo_a_todos_los_demas(int nodo_origen)
+{
+	/*Elijo un enfoque BFS para encontrar el nodo más lejano a nodo_origen */
+  vector<NODO> elementos_visitados;
+  inicializar_vector_con( NO_VISITADO, elementos_visitados , lista_adyacencias.size() );
+  vector<int> distancias;
+  inicializar_vector_con( INFINITO, distancias, lista_adyacencias.size() );
+  queue<int> cola;
+
+  cola.push(nodo_origen);
+  elementos_visitados.at(nodo_origen) = VISITADO;
+  distancias.at(nodo_origen) = 0;
+  while( not cola.empty() ){
+    int un_nodo = cola.front();
+    cola.pop();
+
+		auto it = lista_adyacencias.at(un_nodo).cbegin();
+		auto it_final = lista_adyacencias.at(un_nodo).cend();
+		int adyacente_a_un_nodo;
+		for(it; it != it_final; ++it )
+		{
+			adyacente_a_un_nodo = (*it).first;
+      if( elementos_visitados.at(adyacente_a_un_nodo) == NO_VISITADO )
+      {
+        elementos_visitados.at(adyacente_a_un_nodo) = VISITADO;
+        distancias.at(adyacente_a_un_nodo) = distancias.at(un_nodo) + 1;
+        cola.push(adyacente_a_un_nodo);
+      }
+    } /* ya mire todos los adyacentes a un_nodo */
+  } /* ya mire todos los nodos del arbol */
+  return distancias;
+}
+
+NODO grafo_generador_minimo::elegir_nodo_intermedio_entre(int nodo_origen, int nodo_destino)
+{
+	/* IDEA: reconstruyo el camino entre nodo_origen y nodo_destino y el nodo que
+	esté en el medio es el nodo que debo entregar. */
+
+	/* init */
+  vector<NODO> camino;
+
+  vector<NODO> visitados;
+	visitados.resize(lista_adyacencias.size());
+  inicializar_vector_con(NO_VISITADO ,visitados, lista_adyacencias.size());
+
+  class camino_entre_dos_nodos diagonal_agm;
+  diagonal_agm.nodo_origen = nodo_origen;
+  diagonal_agm.nodo_destino = nodo_destino;
+  diagonal_agm.lista_adyacencias = lista_adyacencias;
+  diagonal_agm.camino = camino;
+  diagonal_agm.visitados = visitados;
+
+	/* construyo la diagonal desde una punta a la otra con este algoritmo recursivo */
+  diagonal_agm.construir_diagonal(nodo_origen);
+  int nodo_master = diagonal_agm.camino.at( ((int) diagonal_agm.camino.size() / 2) );
+  return nodo_master;
+}
+
+bool camino_entre_dos_nodos::construir_diagonal(int nodo_actual)
+{
+	if(visitados.at(nodo_actual) == VISITADO) return false;
+
+	visitados.at(nodo_actual) = VISITADO;
+  bool respuesta = false;
+	/* si soy el nodo que estoy buscando entonces devuelvo true y me agrego al camino */
+  if(nodo_actual == nodo_destino)
+  {
+    respuesta = true;
+  }else{
+		/* llamo recursivamente por todos los nodos adyacentes a nodo_actual */
+		auto it = lista_adyacencias.at(nodo_actual).cbegin();
+		auto it_final = lista_adyacencias.at(nodo_actual).cend();
+		for(it; it != it_final; ++it )
+		{
+			int adyacente = (*it).first;
+      respuesta = construir_diagonal(adyacente);
+      if(respuesta) break;
+    }
+  }
+	if(respuesta) camino.push_back(nodo_actual);
+  return respuesta;
+}
+
+
 
 void grafo_generador_minimo::imprimir_solucion(int peso_grafo, int nodo_master)
 {
@@ -105,194 +167,81 @@ void grafo_generador_minimo::imprimir_solucion(int peso_grafo, int nodo_master)
 
 
 
-/*------------------------------------ Por revisar --------------------*/
 
-bool visite_todos_los_nodos(vector<int> visitados)
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+/*------------------------------------ Revisadas  ----------------------------*/
+
+int indice_del_minimo_de(vector<NODO> &distancias)
 {
-  for(int indice = 0; indice < visitados.size(); indice++)
+  int indice_minimo = 1;
+  for(int indice = 2; indice < distancias.size(); indice++ )
+    if( distancias.at(indice_minimo) >  distancias.at(indice) ) indice_minimo = indice;
+
+  return indice_minimo;
+}
+
+int indice_del_maximo_de(vector<NODO> &distancias)
+{
+  int indice_maximo = 1;
+  for(int indice = 2; indice < distancias.size(); indice++ )
+    if( distancias.at(indice_maximo) < distancias.at(indice) ) indice_maximo = indice;
+
+  return indice_maximo;
+}
+
+void grafo_generador_minimo::crear_agm(grafo_lista_adyacencias grafo_input)
+{
+	/* El AGM lo hago con el enfoque de PRIM */
+
+	// init grafo_generador_minimo
+	peso_agm = 0;
+	lista_adyacencias.resize( grafo_input.lista_adyacencias.size() );
+  inicializar_vector_con(NO_VISITADO, visitados, grafo_input.lista_adyacencias.size());
+
+  /* Empiezo con el nodo 1 */
+  int nodo_actual = 1;
+  int cantidad_nodos_visitados = 0;
+	struct arista una_arista;
+  while( cantidad_nodos_visitados < (grafo_input.lista_adyacencias.size() - 2 ) )
   {
-    if(visitados.at(indice) == NO_VISITADO) return false;
+    if( not visite_a(nodo_actual) )
+    {
+      visitados.at(nodo_actual) = VISITADO;
+      cantidad_nodos_visitados++;
+      agregar_aristas_adyacentes_a(nodo_actual, grafo_input);
+    }
+    una_arista = minima_arista_que_no_forma_ciclos();
+    agregar_arista_al_agm(una_arista);
+    nodo_actual = nodo_que_no_visite(una_arista);
   }
-  return true;
+  return;
 }
-
-/*            dos.dos           */
-
-
-
-int grafo_generador_minimo::nodo_mas_lejano_a(int nodo_origen)
-{
-  vector<int> distancias = distancias_de_un_nodo_a_todos_los_demas(nodo_origen);
-  return indice_del_maximo_de(distancias);
-}
-
-int grafo_generador_minimo::elegir_nodo_intermedio_entre(int nodo_origen, int nodo_destino)
-{
-  /* La idea es que el nodo_origen es el de distancia 0 y el nodo_destino es
-  el de distancia maxima pero todos en el medio existen, osea que yo elijo a
-  uno en el médio y es el que devuelvo. La otra forma es reconstruir el camino
-  entre nodo_origen y nodo_destino y tomar un nodo en el medio pero no se
-  como reconstruirlo... */
-  /* Esto en realidad está mal porque puede haber un nodo a la distancia que
-  yo elijo pero que en realidad no está en el camino entre los dos nodos. */
-
-  //vector<int> distancias = distancias_de_un_nodo_a_todos_los_demas(nodo_origen, lista_adyacencias);
-  //assert( indice_del_maximo_de(distancias) == nodo_destino );
-  //assert( indice_del_minimo_de(distancias) == nodo_origen );
-  //int distancia_intermedia = ((int) maximo_valor_de(distancias) / 2);
-  //return nodo_cuya_distancia_es_igual_a(distancia_intermedia, distancias);
-
-	/*
-  vector<int> camino;
-  vector<int> visitados;
-  inicializar_vector_con(0,visitados, lista_adyacencias.size());
-
-  struct camino_entre_dos_nodos parametros;
-  parametros.nodo_origen = nodo_origen;
-  parametros.nodo_destino = nodo_destino;
-  parametros.lista_adyacencias = lista_adyacencias;
-  parametros.camino = camino;
-  parametros.visitados = visitados;
-
-  visitados.at(nodo_origen) = VISITADO;
-  aux_elegir_nodo_intermedio_entre(nodo_origen, parametros);
-  int respuesta = camino.at( ((int) camino.size() / 2) );
-  return respuesta;
-	*/
-	return 0;
-}
-
-bool aux_elegir_nodo_intermedio_entre(int nivel, struct camino_entre_dos_nodos &parametros)
-{
-	// 		ARREGLAR YA QUE ANTES LO IMPLEMENTE CON VECTOR DE VECTOR Y AHORA ES VECTOR DE LISTAS
-
-  bool respuesta = false;
-
-  // if(parametros.visitados.at(nivel) == VISITADO) return respuesta;
-  //
-  // parametros.visitados.at(nivel) = VISITADO;
-  // if(nivel == parametros.nodo_destino)
-  // {
-  //   respuesta = true;
-  //   parametros.camino.push_back(nivel);
-  // }else{
-  //   int adyacente;
-  //   for(int un_adyacente; un_adyacente < parametros.lista_adyacencias.at(nivel).at(un_adyacente); un_adyacente++)
-  //   {
-  //     adyacente = parametros.lista_adyacencias.at(nivel).at(un_adyacente);
-  //     respuesta = aux_elegir_nodo_intermedio_entre(adyacente, parametros);
-  //     if(respuesta) break;
-  //   }
-  //   if(respuesta) parametros.camino.push_back(nivel);
-  // }
-  return respuesta;
-}
-
-int nodo_cuya_distancia_es_igual_a( int valor_a_buscado, vector<int> &distancias)
-{
-  for(int indice = 0; indice < distancias.size(); indice++)
-    if(distancias.at(indice) == valor_a_buscado) return distancias.at(indice);
-
-  assert( false ); /* NO DEBO LLEGAR ACÁ PORQUE EL ELEMENTO QUE BUSCO EXISTE */
-}
-
-vector<int> grafo_generador_minimo::distancias_de_un_nodo_a_todos_los_demas(int nodo_origen)
-{
-	// ARREGLAR PORQUE ANTES ERA UN VECTOR DE VECTOR Y AHORA ES UN VECTOR DE LISTAS;
-
-
-
-  /*Elijo un enfoque BFS para encontrar el nodo más lejano a nodo_origen */
-  vector<int> elementos_visitados;
-  inicializar_vector_con( 0, elementos_visitados , lista_adyacencias.size() );
-  vector<int> distancias;
-  inicializar_vector_con( INFINITO, distancias, lista_adyacencias.size() );
-  queue<int> cola;
-
-  // cola.push(nodo_origen);
-  // elementos_visitados.at(nodo_origen) = VISITADO;
-  // distancias.at(nodo_origen) = 0;
-  // while( not cola.empty() ){
-  //   int un_nodo = cola.front();
-  //   cola.pop();
-  //   int adyacente_a_un_nodo;
-  //   for(int un_adyacente = 0; un_adyacente < lista_adyacencias.at(un_nodo).size(); un_adyacente++)
-  //   {
-  //     adyacente_a_un_nodo = lista_adyacencias.at(un_nodo).at(un_adyacente);
-  //     if( elementos_visitados.at(adyacente_a_un_nodo) == NO_VISITADO )
-  //     {
-  //       elementos_visitados.at(adyacente_a_un_nodo) = VISITADO;
-  //       distancias.at(adyacente_a_un_nodo) = distancias.at(un_nodo) + 1;
-  //       cola.push(adyacente_a_un_nodo);
-  //     }
-  //   } /* ya mire todos los adyacentes a un_nodo */
-  // } /* ya mire todos los nodos del arbol */
-  return distancias;
-}
-
-
-
-int indice_del_maximo_de(vector<int> &distancias)
-{
-  int maximo = 0;
-  for(int indice = 1; indice < distancias.size(); indice++ )
-    if( distancias.at(maximo) < distancias.at(indice) ) maximo = indice;
-
-  return maximo;
-}
-
-int indice_del_minimo_de(vector<int> &distancias)
-{
-  int minimo = 0;
-  for(int indice = 1; indice < distancias.size(); indice++ )
-    if( distancias.at(minimo) >  distancias.at(indice) ) minimo = indice;
-
-  return minimo;
-}
-
-int maximo_valor_de(vector<int> &distancias)
-{
-  int maximo = INT_MIN;
-  for(int indice = 0; indice < distancias.size(); indice++)
-    if( maximo < distancias.at(indice) ) maximo = distancias.at(indice);
-
-  return maximo;
-}
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-/*--------------------------- Revisadas y auxiliares ------------------------*/
 
 int grafo_generador_minimo::nodo_que_no_visite(struct arista una_arista)
 {
@@ -309,11 +258,18 @@ int grafo_generador_minimo::nodo_que_no_visite(struct arista una_arista)
 
 void grafo_generador_minimo::agregar_arista_al_agm(struct arista una_arista)
 {
-	pair<NODO,PESO> un_nodo(una_arista.otro_nodo, una_arista.peso);
-	pair<NODO,PESO> otro_nodo(una_arista.un_nodo, una_arista.peso);
+	// cout << endl; cout << "estoy en agregar_arista_al_agm" << endl; cout << endl;
+	// cout<<endl; cout<< "el numero de nodo que quiero agregar es: "<< una_arista.un_nodo << endl; cout << endl;
 
-  lista_adyacencias.at(una_arista.un_nodo).push_back(un_nodo);
-  lista_adyacencias.at(una_arista.otro_nodo).push_back(otro_nodo);
+
+	pair<NODO,PESO> unNodo(una_arista.otro_nodo, una_arista.peso);
+	pair<NODO,PESO> otroNodo(una_arista.un_nodo, una_arista.peso);
+	lista_adyacencias.at(una_arista.un_nodo).push_back(unNodo);
+  lista_adyacencias.at(una_arista.otro_nodo).push_back(otroNodo);
+
+	peso_agm = peso_agm + una_arista.peso;
+
+	aristas_agm_imprimir.push_back(una_arista);
 
   return;
 }
@@ -323,8 +279,9 @@ struct arista grafo_generador_minimo::minima_arista_que_no_forma_ciclos()
 {
   struct arista una_arista;
 
-	/* saco aristas hasta que me de una arista que no forma ciclos */
-  while(true)
+	/* saco aristas hasta que me de una arista que no forma ciclos  o ya no alla
+	más aristas para elegir */
+  while( aristas_a_elegir.size() != 0 )
   {
     una_arista = aristas_a_elegir.top();
     aristas_a_elegir.pop();
@@ -336,13 +293,16 @@ struct arista grafo_generador_minimo::minima_arista_que_no_forma_ciclos()
 
 bool grafo_generador_minimo::visite_a(struct arista una_arista)
 {
-  return ( (visitados.at(una_arista.otro_nodo) == VISITADO) and  (visitados.at(una_arista.un_nodo) == VISITADO) );
+  return ( (visitados.at(una_arista.otro_nodo) == VISITADO)
+	and  (visitados.at(una_arista.un_nodo) == VISITADO) );
 }
 
-void grafo_generador_minimo::agregar_aristas_adyacentes_a(int nodo_actual, grafo_lista_adyacencias  &grafo_input)
+void grafo_generador_minimo::agregar_aristas_adyacentes_a(int nodo_actual,
+	class grafo_lista_adyacencias  &grafo_input)
 {
-	auto it = lista_adyacencias.at(nodo_actual).cbegin();
-	auto it_final = lista_adyacencias.at(nodo_actual).cend();
+
+	auto it = grafo_input.lista_adyacencias.at(nodo_actual).cbegin();
+	auto it_final = grafo_input.lista_adyacencias.at(nodo_actual).cend();
 	for(it; it != it_final; ++it )
 	{
     if( visitados.at((*it).first) == VISITADO)
@@ -391,7 +351,8 @@ void grafo_lista_adyacencias::crear_instancia_del_problema(int cantidad_servidor
 	int cantidad_enlaces;
 	cin >> cantidad_enlaces;
 
-	lista_adyacencias.resize(cantidad_servidores +1);
+	lista_adyacencias.resize(cantidad_servidores + 1);
+
 
 	for( int indice = 0; indice < cantidad_enlaces; indice++)
 	{
@@ -431,4 +392,13 @@ void grafo_lista_adyacencias::crear_instancia_del_problema_sin_cantidad_servidor
 	cin >> cantidad_servidores;
 
 	this->crear_instancia_del_problema(cantidad_servidores);
+}
+
+bool visite_todos_los_nodos(vector<int> visitados)
+{
+  for(int indice = 1; indice < visitados.size(); indice++)
+  {
+    if(visitados.at(indice) == NO_VISITADO) return false;
+  }
+  return true;
 }
