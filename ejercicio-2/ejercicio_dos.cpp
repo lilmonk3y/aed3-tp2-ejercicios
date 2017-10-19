@@ -100,7 +100,7 @@ vector<int> grafo_generador_minimo::distancias_de_un_nodo_a_todos_los_demas(int 
   return distancias;
 }
 
-bool camino_entre_dos_nodos::construir_diagonal(int nodo_actual)
+bool camino_entre_dos_nodos::construir_camino_hasta_nodo_destino(int nodo_actual)
 {
 	if(visitados.at(nodo_actual) == VISITADO) return false;
 
@@ -117,7 +117,7 @@ bool camino_entre_dos_nodos::construir_diagonal(int nodo_actual)
 		for(it; it != it_final; ++it )
 		{
 			int adyacente = (*it).first;
-      respuesta = construir_diagonal(adyacente);
+      respuesta = construir_camino_hasta_nodo_destino(adyacente);
       if(respuesta) break;
     }
   }
@@ -192,7 +192,7 @@ NODO grafo_generador_minimo::elegir_nodo_intermedio_entre(int nodo_origen, int n
   diagonal_agm.visitados = visitados;
 
 	/* construyo la diagonal desde una punta a la otra con este algoritmo recursivo */
-  diagonal_agm.construir_diagonal(nodo_origen);
+  diagonal_agm.construir_camino_hasta_nodo_destino(nodo_origen);
   int nodo_master = diagonal_agm.camino.at( ((int) diagonal_agm.camino.size() / 2) );
   return nodo_master;
 }

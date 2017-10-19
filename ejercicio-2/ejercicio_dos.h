@@ -85,7 +85,7 @@ class grafo_generador_minimo{
 class camino_entre_dos_nodos{
   public:
     /* METODOS DE LA CLASE */
-    bool construir_diagonal(int nodo_origen);
+    bool construir_camino_hasta_nodo_destino(int nodo_origen);
 
     /* COLABORADORES INTERNOS */
     NODO nodo_origen;
