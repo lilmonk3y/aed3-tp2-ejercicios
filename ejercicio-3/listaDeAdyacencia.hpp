@@ -9,7 +9,7 @@ class listaAdyacencia{
 
 private:
 
-	vector<list<T>> _nodos;
+	vector<list<T> > _nodos;
 
 public:
 
@@ -34,7 +34,7 @@ public:
 		}
 	}
 
-    vector<list<T>> nodos(){
+    vector<list<T> > nodos(){
         return _nodos;
     }
 
