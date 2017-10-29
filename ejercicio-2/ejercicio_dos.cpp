@@ -12,7 +12,7 @@ void func_main()
 		grafo_input.crear_instancia_del_problema(cantidad_servidores);
 		// sub-problema-uno
 		class grafo_generador_minimo grafo_output;
-		grafo_output.crear_agm(grafo_input);
+		grafo_output.crear_agm_v2(grafo_input);
 		int peso_grafo_output = grafo_output.peso_agm;
 		// cout<<endl; cout<< "El peso del grafo generado es: "<< grafo_output.peso_agm <<endl; cout<<endl;
 		// sub-problema-dos
@@ -24,6 +24,7 @@ void func_main()
 	return;
 }
 
+// Este tiene una complejidad peor que crear_agm_v2 por lo que pase a usar la segunda versión
 void grafo_generador_minimo::crear_agm(grafo_lista_adyacencias grafo_input)
 {
 	/* El AGM lo hago con el enfoque de PRIM */
@@ -51,6 +52,39 @@ void grafo_generador_minimo::crear_agm(grafo_lista_adyacencias grafo_input)
   }
   return;
 }
+
+void grafo_generador_minimo::crear_agm_v2(grafo_lista_adyacencias grafo_input)
+{
+	/* El AGM lo hago con el enfoque de PRIM */
+
+	// init grafo_generador_minimo
+	peso_agm = 0;
+	lista_adyacencias.resize( grafo_input.lista_adyacencias.size() );
+  inicializar_vector_con(NO_VISITADO, visitados, grafo_input.lista_adyacencias.size());
+
+  /* Empiezo con el nodo 1 */
+  int nodo_actual = 1;
+	struct arista una_arista;
+	visitados.at(nodo_actual) = VISITADO;
+	agregar_aristas_adyacentes_a(nodo_actual, grafo_input);
+	/* saco aristas hasta que me de una arista que no forma ciclos  o ya no haya
+	más aristas para elegir */
+	while( not aristas_a_elegir.empty() )
+	{
+		/* me quedo con la primer arista que no me genera ciclos en el agm */
+    una_arista = aristas_a_elegir.top();
+    aristas_a_elegir.pop();
+		if( visite_a(una_arista) ) continue;
+
+    agregar_arista_al_agm(una_arista);
+		nodo_actual = nodo_que_no_visite(una_arista);
+		visitados.at(nodo_actual) = VISITADO;
+		agregar_aristas_adyacentes_a(nodo_actual, grafo_input);
+	}
+	return;
+}
+
+//int grafo_generador_minimo::primer_arista_que_no_forme_ciclos
 
 int grafo_generador_minimo::elegir_master()
 {
@@ -221,7 +255,7 @@ int grafo_generador_minimo::nodo_que_no_visite(struct arista una_arista)
   if( visite_a(una_arista.un_nodo) )
   {
     respuesta = una_arista.otro_nodo;
-    assert( not visite_a(una_arista.otro_nodo) );
+    //assert( not ( visite_a(una_arista.otro_nodo) and visite_a(una_arista.un_nodo) ) );
   }else{
     respuesta = una_arista.un_nodo;
   }
@@ -253,18 +287,25 @@ struct arista grafo_generador_minimo::minima_arista_que_no_forma_ciclos()
 
 	/* saco aristas hasta que me de una arista que no forma ciclos  o ya no alla
 	más aristas para elegir */
-  while( aristas_a_elegir.size() != 0 )
+  while( not aristas_a_elegir.empty() )
   {
     una_arista = aristas_a_elegir.top();
     aristas_a_elegir.pop();
 
     if( not visite_a(una_arista) ) break;
+		//si saco la ultima entonces esta no tiene que tener a los dos vistados.
+		if( aristas_a_elegir.empty() )
+			assert( not ( (visitados.at(una_arista.otro_nodo) == NO_VISITADO)
+			and  (visitados.at(una_arista.un_nodo) == NO_VISITADO) ) );
   }
   return una_arista;
 }
 
 bool grafo_generador_minimo::visite_a(struct arista una_arista)
 {
+	assert( not ( (visitados.at(una_arista.otro_nodo) == NO_VISITADO)
+	and  (visitados.at(una_arista.un_nodo) == NO_VISITADO) ) );
+
   return ( (visitados.at(una_arista.otro_nodo) == VISITADO)
 	and  (visitados.at(una_arista.un_nodo) == VISITADO) );
 }

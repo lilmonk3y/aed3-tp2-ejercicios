@@ -30,10 +30,10 @@ ejercicio_2:
 	$(CC) $(CCFLAGS) -o $(TARGET_2) $(SOURCE_2) $(MAIN_2)
 # ./ejercicio_2 < ejercicio-2/tests/test01.txt
 
-# ejercicio_2_tester:
-# 	$(RM) $(TARGET_2)
-# 	$(CC) $(CCFLAGS) -o $(TARGET_2) $(SOURCE_2) $(MAIN_2)
-# 	./ejercicio_2 < ejercicio-2/tests/test06.txt
+ejercicio_2_tester:
+	$(RM) $(TARGET_2)
+	$(CC) $(CCFLAGS) -o $(TARGET_2) $(SOURCE_2) $(MAIN_2)
+	./ejercicio_2 < ejercicio-2/tests/test03.txt
 #
 # ejercicio_2_tests:
 # 	$(CC) $(CCFLAGS) -o $(TARGET_2_test) $(SOURCE_2) $(MAIN_2_test)
@@ -41,6 +41,6 @@ ejercicio_2:
 
 ejercicio_3:
 	$(CC) $(CCFLAGSOPT) -o $(TARGET_3) $(SOURCE_3)
-	
+
 clean:
 	$(RM) $(TARGET_1) $(TARGET_2) $(TARGET_3)

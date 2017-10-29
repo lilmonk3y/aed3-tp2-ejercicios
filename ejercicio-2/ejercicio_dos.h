@@ -57,6 +57,7 @@ class grafo_generador_minimo{
 
     /* principales */
     void crear_agm(grafo_lista_adyacencias grafo_input);
+    void crear_agm_v2(grafo_lista_adyacencias grafo_input);
     int elegir_master();
     void imprimir_solucion(int peso_grafo, int nodo_master);
 
