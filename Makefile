@@ -15,6 +15,8 @@ SOURCE_2 = ejercicio-2/ejercicio_dos.h ejercicio-2/ejercicio_dos.cpp
 MAIN_2 = ejercicio-2/main.cpp
 TARGET_2_test = ejercicio_2_test02
 MAIN_2_test = ejercicio-2/tests/test_codigo.cpp
+GENERADOR_EXP1 = gen_exp1
+SOURCE_GEN1 = ejercicio-2/experimentación/exp1_generador_instancias.cpp
 
 #ejercicio_3
 TARGET_3 = ejercicio_3
@@ -38,6 +40,8 @@ ejercicio_2_tester:
 # ejercicio_2_tests:
 # 	$(CC) $(CCFLAGS) -o $(TARGET_2_test) $(SOURCE_2) $(MAIN_2_test)
 
+ejercicio_2_generador_instancias_exp1:
+	$(CC) $(CCFLAGS) -o $(GENERADOR_EXP1) $(SOURCE_2) $(SOURCE_GEN1)
 
 ejercicio_3:
 	$(CC) $(CCFLAGSOPT) -o $(TARGET_3) $(SOURCE_3)
