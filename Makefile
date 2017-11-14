@@ -19,6 +19,8 @@ TARGET_EXP1 = gen_exp1
 SOURCE_GEN1 = ejercicio-2/experimentacion/exp1_generador_instancias.cpp
 TARGET_EXP2_DENSO = gen_exp2_denso
 SOURCE_GEN2_DENSO = ejercicio-2/experimentacion/exp2_grafo_denso.cpp
+TARGET_EXP2_ESPARZO = gen_exp2_esparzo
+SOURCE_GEN2_ESPARZO = ejercicio-2/experimentacion/exp2_grafo_esparzo.cpp
 #ejercicio_3
 TARGET_3 = ejercicio_3
 SOURCE_3 = ejercicio-3/ejercicio_3.cpp
@@ -41,14 +43,18 @@ ejercicio_2_tester:
 # ejercicio_2_tests:
 # 	$(CC) $(CCFLAGS) -o $(TARGET_2_test) $(SOURCE_2) $(MAIN_2_test)
 
-ejercicio_2_generador_instancias_exp1:
+ej2_exp1:
 	$(CC) $(CCFLAGS) -o $(TARGET_EXP1) $(SOURCE_2) $(SOURCE_GEN1)
 
-ejercicio_2_generador_instancias_exp2:
+ej2_exp2_denso:
 	$(CC) $(CCFLAGS) -o $(TARGET_EXP2_DENSO) $(SOURCE_GEN2_DENSO)
+
+ej2_exp2_esparzo:
+	$(CC) $(CCFLAGS) -o $(TARGET_EXP2_ESPARZO) $(SOURCE_GEN2_ESPARZO)
 
 ejercicio_3:
 	$(CC) $(CCFLAGSOPT) -o $(TARGET_3) $(SOURCE_3)
 
 clean:
-	$(RM) $(TARGET_1) $(TARGET_2) $(TARGET_3) $(TARGET_EXP1) $(TARGET_EXP2_DENSO)
+	$(RM) $(TARGET_1) $(TARGET_2) $(TARGET_3) $(TARGET_EXP1) $(TARGET_EXP2_DENSO) \
+	$(TARGET_EXP2_ESPARZO)

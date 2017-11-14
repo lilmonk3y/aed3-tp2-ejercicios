@@ -9,7 +9,6 @@
 #include <set> /* set */
 #include <tuple>
 
-
 using namespace std;
 
 class arista{
@@ -25,7 +24,7 @@ public:
 	}
 	bool operator < (arista const & obj) const
 	{
-		return (un_extremo < obj.otro_extremo) ;
+		return (un_extremo > obj.otro_extremo) ;
 	}
 
 };
@@ -38,13 +37,13 @@ int main()
 	file_object.open(file_name);
 
 	// escribo en el archivo todo el grafo.
-	int cantidad_vertices = 5; // tiene que ser par
+	int cantidad_vertices = 500; // tiene que ser par
 	int cantidad_aristas = (cantidad_vertices * (cantidad_vertices-1)) / 2;
 	int un_extremo;
 	int otro_extremo;
 	int peso_arista;
 	set<class arista> conjunto_aristas;
-	// set<tuple<int,int,int> > conjunto_aristas;
+
 	file_object << cantidad_vertices << " " << cantidad_aristas <<endl;
 
 	for(int indice_primer_conjunto = 1; indice_primer_conjunto <= cantidad_vertices; indice_primer_conjunto++)
@@ -58,18 +57,14 @@ int main()
 			peso_arista = 1 + rand() % 1000;
 
 			conjunto_aristas.insert(arista(un_extremo,otro_extremo,peso_arista));
-			// conjunto_aristas.insert(make_tuple(un_extremo,otro_extremo,peso_arista));
 		}
 	}
 
-	// for( set<arista>::iterator iter_aristas = conjunto_aristas.begin();
 	for( set<arista>::iterator iter_aristas = conjunto_aristas.begin();
 	iter_aristas != conjunto_aristas.end(); ++iter_aristas )
 	{
 		file_object << (*iter_aristas).un_extremo << " "<< (*iter_aristas).otro_extremo
 		<< " "<< (*iter_aristas).peso_arista << endl;
-		// file_object << get<0>(*iter_aristas) << " "<< get<1>(*iter_aristas)
-		// << " "<< get<2>(*iter_aristas) << endl;
 	}
 
 	file_object<< 0 << endl;
