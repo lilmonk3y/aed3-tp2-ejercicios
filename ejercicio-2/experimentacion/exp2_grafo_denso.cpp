@@ -7,21 +7,27 @@
 #include <cassert> /* assert */
 #include <utility> /* pair */
 #include <set> /* set */
-#include <unordered_set>
+#include <tuple>
+
 
 using namespace std;
 
-struct arista{
+class arista{
+public:
 	int un_extremo;
 	int otro_extremo;
 	int peso_arista;
-	bool operator == ( arista& obj)
+	arista(int numero, int otro, int otro_mas)
 	{
-    if( un_extremo != obj.un_extremo || otro_extremo != obj.otro_extremo ){
-        return false;
-    }
-		return true;
-  }
+		un_extremo = numero;
+		otro_extremo = otro;
+		peso_arista = otro_mas;
+	}
+	bool operator < (arista const & obj) const
+	{
+		return (un_extremo < obj.otro_extremo) ;
+	}
+
 };
 
 int main()
@@ -32,14 +38,13 @@ int main()
 	file_object.open(file_name);
 
 	// escribo en el archivo todo el grafo.
-	int cantidad_vertices = 20; // tiene que ser par
+	int cantidad_vertices = 5; // tiene que ser par
 	int cantidad_aristas = (cantidad_vertices * (cantidad_vertices-1)) / 2;
 	int un_extremo;
 	int otro_extremo;
 	int peso_arista;
-	unordered_set<struct arista> conjunto_aristas;
-	struct arista una_arista;
-
+	set<class arista> conjunto_aristas;
+	// set<tuple<int,int,int> > conjunto_aristas;
 	file_object << cantidad_vertices << " " << cantidad_aristas <<endl;
 
 	for(int indice_primer_conjunto = 1; indice_primer_conjunto <= cantidad_vertices; indice_primer_conjunto++)
@@ -52,19 +57,19 @@ int main()
 			otro_extremo = indice_segundo_conjunto;
 			peso_arista = 1 + rand() % 1000;
 
-			una_arista.un_extremo = un_extremo;
-			una_arista.otro_extremo = otro_extremo;
-			una_arista.peso_arista = peso_arista;
-
-			conjunto_aristas.insert(una_arista);
+			conjunto_aristas.insert(arista(un_extremo,otro_extremo,peso_arista));
+			// conjunto_aristas.insert(make_tuple(un_extremo,otro_extremo,peso_arista));
 		}
 	}
 
-	unordered_set<arista>::iterator iter_aristas;
-	iter_aristas = conjunto_aristas.begin();
-	while( iter_aristas != conjunto_aristas.end() )
+	// for( set<arista>::iterator iter_aristas = conjunto_aristas.begin();
+	for( set<arista>::iterator iter_aristas = conjunto_aristas.begin();
+	iter_aristas != conjunto_aristas.end(); ++iter_aristas )
 	{
-		file_object << (*iter_aristas).un_extremo << " "<< (*iter_aristas).otro_extremo << " "<< (*iter_aristas).peso_arista << endl;
+		file_object << (*iter_aristas).un_extremo << " "<< (*iter_aristas).otro_extremo
+		<< " "<< (*iter_aristas).peso_arista << endl;
+		// file_object << get<0>(*iter_aristas) << " "<< get<1>(*iter_aristas)
+		// << " "<< get<2>(*iter_aristas) << endl;
 	}
 
 	file_object<< 0 << endl;
