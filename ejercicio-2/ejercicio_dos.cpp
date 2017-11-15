@@ -5,11 +5,12 @@
 void func_main()
 {
 	int cantidad_servidores;
+	int cantidad_aristas;
 	while( hay_entrada(cantidad_servidores) )
 	{
 		// init
 		class grafo_lista_adyacencias  grafo_input;
-		grafo_input.crear_instancia_del_problema(cantidad_servidores);
+		cantidad_aristas = grafo_input.crear_instancia_del_problema(cantidad_servidores);
 		// sub-problema-uno
 		class grafo_generador_minimo grafo_output;
 		grafo_output.crear_agm_v2(grafo_input);
@@ -163,7 +164,7 @@ bool camino_entre_dos_nodos::construir_camino_hasta_nodo_destino(int nodo_actual
 
 /*------------------------------AUXILIARES------------------------------------*/
 
-void grafo_lista_adyacencias::crear_instancia_del_problema(int cantidad_servidores)
+int grafo_lista_adyacencias::crear_instancia_del_problema(int cantidad_servidores)
 {
 	int cantidad_enlaces;
 	cin >> cantidad_enlaces;
@@ -183,7 +184,7 @@ void grafo_lista_adyacencias::crear_instancia_del_problema(int cantidad_servidor
 		pair<NODO,PESO> misma_arista(nodo_uno, peso_arista);
 		lista_adyacencias.at(nodo_dos).push_back(misma_arista);
 	}
-	return;
+	return cantidad_enlaces;
 }
 
 void grafo_generador_minimo::imprimir_solucion(int peso_grafo, int nodo_master)
