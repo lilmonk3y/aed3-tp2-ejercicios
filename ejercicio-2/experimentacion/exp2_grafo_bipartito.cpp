@@ -17,22 +17,29 @@ int main()
 	file_object.open(file_name);
 
 	// escribo en el archivo todo el grafo.
-	int cantidad_vertices = 500; // tiene que ser par
-	int cantidad_aristas = (cantidad_vertices / 2) * ((cantidad_vertices / 2) -1);
+	int cantidad_vertices_maxima = 500; // tiene que ser par
+	int cantidad_aristas;
 	int un_extremo;
 	int otro_extremo;
 	int peso_arista;
 
-	file_object << cantidad_vertices << " " << cantidad_aristas <<endl;
-
-	for(int indice_primer_conjunto = 1; indice_primer_conjunto <= (cantidad_vertices / 2); indice_primer_conjunto++)
+	for(int indice = 10; indice <= cantidad_vertices_maxima;indice=indice+10)
 	{
-		for(int indice_segundo_conjunto = (cantidad_vertices / 2) + 1; indice_segundo_conjunto <= cantidad_vertices; indice_segundo_conjunto++)
+		cantidad_aristas = (indice / 2) * ((indice / 2) );
+		file_object << indice << " " << cantidad_aristas <<endl;
+
+		for(int indice_primer_conjunto = 1; indice_primer_conjunto <=
+		(indice / 2); indice_primer_conjunto++)
 		{
-			un_extremo = indice_primer_conjunto;
-			otro_extremo = indice_segundo_conjunto;
-			peso_arista = 1 + rand() % 1000;
-			file_object << un_extremo << " "<< otro_extremo << " "<< peso_arista << endl;
+
+			for(int indice_segundo_conjunto = (indice / 2) + 1;
+			indice_segundo_conjunto <= indice; indice_segundo_conjunto++)
+			{
+				un_extremo = indice_primer_conjunto;
+				otro_extremo = indice_segundo_conjunto;
+				peso_arista = 1 + rand() % 1000;
+				file_object << un_extremo << " "<< otro_extremo << " "<< peso_arista << endl;
+			}
 		}
 	}
 

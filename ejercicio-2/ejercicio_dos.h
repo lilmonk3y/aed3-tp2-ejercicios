@@ -24,7 +24,7 @@ class grafo_lista_adyacencias{
     //el vector tiene n + 1 posiciones. la posición 0 no es válida.
     vector<list<pair<NODO, PESO> > > lista_adyacencias;
 
-    void crear_instancia_del_problema(int entrada);
+    int crear_instancia_del_problema(int entrada);
     bool existe_arista_entre_nodos(int nodo_uno, int nodo_dos, int peso_arista);
     void crear_instancia_del_problema_sin_cantidad_servidores();
 };

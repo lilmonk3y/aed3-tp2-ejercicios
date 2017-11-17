@@ -93,6 +93,7 @@ int grafo_generador_minimo::elegir_master()
   int nodo_s = 1;
   int nodo_v = nodo_mas_lejano_a(nodo_s);
   int nodo_w = nodo_mas_lejano_a(nodo_v);
+
   return elegir_nodo_intermedio_entre(nodo_v, nodo_w);
 }
 
@@ -170,7 +171,6 @@ int grafo_lista_adyacencias::crear_instancia_del_problema(int cantidad_servidore
 	cin >> cantidad_enlaces;
 
 	lista_adyacencias.resize(cantidad_servidores + 1);
-
 	for( int indice = 0; indice < cantidad_enlaces; indice++)
 	{
 		int nodo_uno, nodo_dos, peso_arista;
@@ -179,6 +179,7 @@ int grafo_lista_adyacencias::crear_instancia_del_problema(int cantidad_servidore
 		cin >> peso_arista;
 
 		pair<NODO,PESO> una_arista(nodo_dos, peso_arista);
+		//cout<<"hola"<<endl;
 		lista_adyacencias.at(nodo_uno).push_back(una_arista);
 
 		pair<NODO,PESO> misma_arista(nodo_uno, peso_arista);
@@ -228,6 +229,8 @@ NODO grafo_generador_minimo::elegir_nodo_intermedio_entre(int nodo_origen, int n
 
 	/* construyo la diagonal desde una punta a la otra con este algoritmo recursivo */
   diagonal_agm.construir_camino_hasta_nodo_destino(nodo_origen);
+	if(diagonal_agm.camino.size() == 0) return 0;
+
   int nodo_master = diagonal_agm.camino.at( ((int) diagonal_agm.camino.size() / 2) );
   return nodo_master;
 }
