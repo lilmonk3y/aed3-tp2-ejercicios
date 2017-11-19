@@ -31,8 +31,9 @@ SOURCE_TIEMPOS = ejercicio-2/experimentacion/tomar_tiempos.cpp
 TARGET_3 = ejercicio_3
 SOURCE_3 = ejercicio-3/ejercicio_3.cpp
 
-all: $(TARGET_1) $(TARGET_2) $(TARGET_3)
-
+#all: $(TARGET_1) $(TARGET_2) $(TARGET_3)
+all: ejercicio_2 ej2_exp2_bipartito ej2_exp2_denso ej2_exp2_esparzo \
+	ej2_exp2_estrella ej2_tomar_tiempos
 ejercicio_1:
 	$(CC) $(CCFLAGSOPT) -o $(TARGET_1) $(SOURCE_1) $(MAIN_1)
 
@@ -45,9 +46,6 @@ ejercicio_2_tester:
 	$(RM) $(TARGET_2)
 	$(CC) $(CCFLAGS) -o $(TARGET_2) $(SOURCE_2) $(MAIN_2)
 	./ejercicio_2 < ejercicio-2/tests/test03.txt
-
-ej2_exp1:
-	$(CC) $(CCFLAGS) -o $(TARGET_EXP1) $(SOURCE_2) $(SOURCE_GEN1)
 
 ej2_exp2_bipartito:
 	$(CC) $(CCFLAGS) -o $(TARGET_EXP2_BIPARTITO) $(SOURCE_GEN2_BIPARTITO)
@@ -68,5 +66,5 @@ ejercicio_3:
 	$(CC) $(CCFLAGSOPT) -o $(TARGET_3) $(SOURCE_3)
 
 clean:
-	$(RM) $(TARGET_1) $(TARGET_2) $(TARGET_3) $(TARGET_EXP1) $(TARGET_EXP2_DENSO) \
+	$(RM) $(TARGET_1) $(TARGET_2) $(TARGET_3) $(TARGET_EXP2_DENSO) \
 	$(TARGET_EXP2_ESPARZO) $(TARGET_EXP2_ESTRELLA) $(TARGET_EXP2_BIPARTITO)

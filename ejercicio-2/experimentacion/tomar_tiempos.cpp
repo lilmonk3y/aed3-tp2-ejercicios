@@ -2,7 +2,6 @@
 #include <time.h> /* clock_t, clock, CLOCKS_PER_SEC */
 #include <fstream>
 #include <math.h>
-#define HAY_ENTRADA true
 
 int handler_tiempos()
 {
@@ -14,22 +13,17 @@ int handler_tiempos()
   << "," << "tiempo_crear_agm" << "," << "tiempo_elegir_master" << std::endl;
 
   // int cantidad_iteraciones_para_eliminar_ruido = 50;
-	int cantidad_iteraciones_para_eliminar_ruido = 2;
+	int cantidad_iteraciones_para_eliminar_ruido = 50;
   double promedio;
   double tiempo_primera_parte;
   double tiempo_segunda_parte;
   int cantidad_vertices;
   int cantidad_aristas;
-  int cantidad_servidores;
-	while(  hay_entrada(cantidad_servidores) )
+	while(  hay_entrada(cantidad_vertices) )
   {
     class grafo_lista_adyacencias  grafo_input;
-		//cout<<cantidad_servidores<<endl;
-		//cout<<"capooooooo"<<endl;
     cantidad_aristas = grafo_input.crear_instancia_del_problema(
-		cantidad_servidores);
-
-    cantidad_vertices = cantidad_servidores;
+		cantidad_vertices);
 
     /* Tiempos primera parte. */
     vector<double> vector_para_promediar_tiempos;
@@ -77,8 +71,8 @@ int handler_tiempos()
 		cantidad_iteraciones_para_eliminar_ruido; indice_ruido++)
     {
       cantidad_de_ticks_de_clock_cpu = clock();
-      int nodo_master = grafo_output.elegir_master();
 
+      int nodo_master = grafo_output.elegir_master();
 
       cantidad_de_ticks_de_clock_cpu = clock() - cantidad_de_ticks_de_clock_cpu;
       /* Tiempo de la iteracion en segundos */
@@ -105,9 +99,10 @@ int handler_tiempos()
     file_object << cantidad_vertices<< ","<< cantidad_aristas
     << ","<< tiempo_primera_parte + tiempo_segunda_parte <<","<<tiempo_primera_parte
     <<","<<tiempo_segunda_parte<< std::endl;
-		cantidad_servidores = 0;
+		cantidad_vertices = 0;
   }
 }
+
 int main()
 {
   handler_tiempos();

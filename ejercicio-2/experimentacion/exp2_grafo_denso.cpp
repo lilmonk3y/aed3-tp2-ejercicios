@@ -38,35 +38,39 @@ int main()
 
 	// escribo en el archivo todo el grafo.
 	int cantidad_vertices = 500; // tiene que ser par
-	int cantidad_aristas = (cantidad_vertices * (cantidad_vertices-1)) / 2;
 	int un_extremo;
 	int otro_extremo;
 	int peso_arista;
-	set<class arista> conjunto_aristas;
-
-	file_object << cantidad_vertices << " " << cantidad_aristas <<endl;
-
-	for(int indice_primer_conjunto = 1; indice_primer_conjunto <= cantidad_vertices; indice_primer_conjunto++)
+	for(int indice = 2; indice <= cantidad_vertices; indice = indice+2)
 	{
-		for(int indice_segundo_conjunto = 1; indice_segundo_conjunto <= cantidad_vertices; indice_segundo_conjunto++)
+		int cantidad_aristas = (indice*(indice-1)) / 2;
+		set<class arista> conjunto_aristas;
+		file_object << indice << " " << cantidad_aristas <<endl;
+
+		for(int indice_primer_conjunto = 1; indice_primer_conjunto
+		<= indice; indice_primer_conjunto++)
 		{
-			if( indice_primer_conjunto == indice_segundo_conjunto) continue;
+			for(int indice_segundo_conjunto = 1; indice_segundo_conjunto
+			<= indice; indice_segundo_conjunto++)
+			{
+				if( indice_primer_conjunto == indice_segundo_conjunto) continue;
 
-			un_extremo = indice_primer_conjunto;
-			otro_extremo = indice_segundo_conjunto;
-			peso_arista = 1 + rand() % 1000;
+				un_extremo = indice_primer_conjunto;
+				otro_extremo = indice_segundo_conjunto;
+				peso_arista = 1 + rand() % 1000;
 
-			conjunto_aristas.insert(arista(un_extremo,otro_extremo,peso_arista));
+				conjunto_aristas.insert(arista(un_extremo,otro_extremo,peso_arista));
+			}
+		}
+
+		for( set<arista>::iterator iter_aristas = conjunto_aristas.begin();
+		iter_aristas != conjunto_aristas.end(); ++iter_aristas )
+		{
+			file_object << (*iter_aristas).un_extremo << " "
+			<< (*iter_aristas).otro_extremo
+			<< " "<< (*iter_aristas).peso_arista << endl;
 		}
 	}
-
-	for( set<arista>::iterator iter_aristas = conjunto_aristas.begin();
-	iter_aristas != conjunto_aristas.end(); ++iter_aristas )
-	{
-		file_object << (*iter_aristas).un_extremo << " "<< (*iter_aristas).otro_extremo
-		<< " "<< (*iter_aristas).peso_arista << endl;
-	}
-
 	file_object<< 0 << endl;
 	file_object.close();
 }

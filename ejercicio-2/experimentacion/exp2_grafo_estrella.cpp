@@ -41,29 +41,33 @@ int main()
 	int un_extremo;
 	int otro_extremo;
 	int peso_arista;
-	set<class arista> conjunto_aristas;
 
-  // Hago conexo al grafo.
-	for(int indice = 2; indice <= cantidad_vertices; indice = indice +1)
+	for(int cantidad_parcial_vertices = 2; cantidad_parcial_vertices
+	<=cantidad_vertices;cantidad_parcial_vertices=cantidad_parcial_vertices+2)
 	{
-  	un_extremo = 1;
-  	otro_extremo = indice;
-  	peso_arista = 1 + rand() % 1000;
+		set<class arista> conjunto_aristas;
 
-  	conjunto_aristas.insert(arista(otro_extremo,un_extremo,peso_arista));
+	  // Hago conexo al grafo.
+		for(int indice = 2; indice <= cantidad_parcial_vertices; indice = indice +1)
+		{
+	  	un_extremo = 1;
+	  	otro_extremo = indice;
+	  	peso_arista = 1 + rand() % 1000;
+
+	  	conjunto_aristas.insert(arista(otro_extremo,un_extremo,peso_arista));
+		}
+
+	  int cantidad_aristas = conjunto_aristas.size();
+	  file_object << cantidad_parcial_vertices << " " << cantidad_aristas <<endl;
+
+	  // Escribo aristas resultantes.
+		for( set<arista>::iterator iter_aristas = conjunto_aristas.begin();
+		iter_aristas != conjunto_aristas.end(); ++iter_aristas )
+		{
+			file_object << (*iter_aristas).un_extremo << " "<< (*iter_aristas).otro_extremo
+			<< " "<< (*iter_aristas).peso_arista << endl;
+		}
 	}
-
-  int cantidad_aristas = conjunto_aristas.size();
-  file_object << cantidad_vertices << " " << cantidad_aristas <<endl;
-
-  // Escribo aristas resultantes.
-	for( set<arista>::iterator iter_aristas = conjunto_aristas.begin();
-	iter_aristas != conjunto_aristas.end(); ++iter_aristas )
-	{
-		file_object << (*iter_aristas).un_extremo << " "<< (*iter_aristas).otro_extremo
-		<< " "<< (*iter_aristas).peso_arista << endl;
-	}
-
 	file_object<< 0 << endl;
 	file_object.close();
 }

@@ -41,41 +41,47 @@ int main()
 	int un_extremo;
 	int otro_extremo;
 	int peso_arista;
-	set<class arista> conjunto_aristas;
-
-
-  // Hago conexo al grafo.
-	for(int indice = 1; indice < 10; indice = indice +1)
+	for(int cantidad_parcial_vertices = 2; cantidad_parcial_vertices <=
+	cantidad_vertices; cantidad_parcial_vertices=cantidad_parcial_vertices+2)
 	{
-  	un_extremo = indice;
-  	otro_extremo = indice + 1;
-  	peso_arista = 1 + rand() % 1000;
+		set<class arista> conjunto_aristas;
 
-  	conjunto_aristas.insert(arista(otro_extremo,un_extremo,peso_arista));
+	  // Hago conexo al grafo.
+		for(int indice = 1; indice < cantidad_parcial_vertices;
+		indice = indice +1)
+		{
+	  	un_extremo = indice;
+	  	otro_extremo = indice + 1;
+	  	peso_arista = 1 + rand() % 1000;
+
+	  	conjunto_aristas.insert(arista(otro_extremo,un_extremo,peso_arista));
+		}
+
+	  // Agrego un 10% de las aristas del denso
+	  int aristas_extra =
+		(cantidad_parcial_vertices*(cantidad_parcial_vertices-1))/(2*10);
+
+	  for(int indice = 1; indice < aristas_extra; indice++)
+		{
+	  	un_extremo = 1 + rand() % cantidad_parcial_vertices;
+	  	otro_extremo = 1 + rand() % cantidad_parcial_vertices;
+	  	peso_arista = 1 + rand() % 1000;
+
+	  	conjunto_aristas.insert(arista(otro_extremo,un_extremo,peso_arista));
+		}
+
+	  int cantidad_aristas = conjunto_aristas.size();
+	  file_object << cantidad_parcial_vertices <<
+	 	" " << cantidad_aristas <<endl;
+
+	  // Escribo aristas resultantes.
+		for( set<arista>::iterator iter_aristas = conjunto_aristas.begin();
+		iter_aristas != conjunto_aristas.end(); ++iter_aristas )
+		{
+			file_object << (*iter_aristas).un_extremo << " "<< (*iter_aristas).otro_extremo
+			<< " "<< (*iter_aristas).peso_arista << endl;
+		}
 	}
-
-  // Agrego un 10% de las aristas del denso
-  int aristas_extra = (cantidad_vertices * (cantidad_vertices-1)) / (2 * 10);
-  for(int indice = 1; indice < aristas_extra; indice++)
-	{
-  	un_extremo = 1 + rand() % cantidad_vertices;
-  	otro_extremo = 1 + rand() % cantidad_vertices;
-  	peso_arista = 1 + rand() % 1000;
-
-  	conjunto_aristas.insert(arista(otro_extremo,un_extremo,peso_arista));
-	}
-
-  int cantidad_aristas = conjunto_aristas.size();
-  file_object << cantidad_vertices << " " << cantidad_aristas <<endl;
-
-  // Escribo aristas resultantes.
-	for( set<arista>::iterator iter_aristas = conjunto_aristas.begin();
-	iter_aristas != conjunto_aristas.end(); ++iter_aristas )
-	{
-		file_object << (*iter_aristas).un_extremo << " "<< (*iter_aristas).otro_extremo
-		<< " "<< (*iter_aristas).peso_arista << endl;
-	}
-
 	file_object<< 0 << endl;
 	file_object.close();
 }
