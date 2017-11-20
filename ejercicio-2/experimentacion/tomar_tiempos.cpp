@@ -13,7 +13,7 @@ int handler_tiempos()
   << "," << "tiempo_crear_agm" << "," << "tiempo_elegir_master" << std::endl;
 
   // int cantidad_iteraciones_para_eliminar_ruido = 50;
-	int cantidad_iteraciones_para_eliminar_ruido = 50;
+	int cantidad_iteraciones_para_eliminar_ruido = 500;
   double promedio;
   double tiempo_primera_parte;
   double tiempo_segunda_parte;
@@ -55,7 +55,7 @@ int handler_tiempos()
       promedio += vector_para_promediar_tiempos[indice_promedios];
     }
     promedio = promedio /((double) cantidad_iteraciones_para_eliminar_ruido);
-    // promedio = log(promedio);
+    promedio = log(promedio);
 
     tiempo_primera_parte = promedio;
 
@@ -91,7 +91,7 @@ int handler_tiempos()
       promedio += vector_promedios_de_iteraciones[indice_promedios];
     }
     promedio = promedio /((double) cantidad_iteraciones_para_eliminar_ruido);
-    // promedio = log(promedio);
+    promedio = log(promedio);
 
     tiempo_segunda_parte = promedio;
 
