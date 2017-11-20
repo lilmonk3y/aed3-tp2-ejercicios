@@ -31,9 +31,8 @@ SOURCE_TIEMPOS = ejercicio-2/experimentacion/tomar_tiempos.cpp
 TARGET_3 = ejercicio_3
 SOURCE_3 = ejercicio-3/ejercicio_3.cpp
 
-#all: $(TARGET_1) $(TARGET_2) $(TARGET_3)
-all: ejercicio_2 ej2_exp2_bipartito ej2_exp2_denso ej2_exp2_esparzo \
-	ej2_exp2_estrella ej2_tomar_tiempos
+all: $(TARGET_1) $(TARGET_2) $(TARGET_3)
+
 ejercicio_1:
 	$(CC) $(CCFLAGSOPT) -o $(TARGET_1) $(SOURCE_1) $(MAIN_1)
 
