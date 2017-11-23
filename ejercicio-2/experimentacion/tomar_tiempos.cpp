@@ -41,8 +41,8 @@ int handler_tiempos()
       /* Tiempo de la iteracion en segundos */
       double tiempo_iteracion =
 			((double)cantidad_de_ticks_de_clock_cpu)/CLOCKS_PER_SEC;
-      /* Tiempo de la iteracion en milisegundos */
-      tiempo_iteracion = tiempo_iteracion * 1000;
+      /* Tiempo de la iteracion en microsegundos */
+      tiempo_iteracion = tiempo_iteracion * 1000000.0;
       vector_para_promediar_tiempos.push_back(tiempo_iteracion);
     }
     /* Saco el promedio de clocks de correr esta instancia y lo imprimo en el
@@ -78,8 +78,8 @@ int handler_tiempos()
       /* Tiempo de la iteracion en segundos */
       double tiempo_iteracion =
 			((double)cantidad_de_ticks_de_clock_cpu)/CLOCKS_PER_SEC;
-      /* Tiempo de la iteracion en milisegundos */
-      tiempo_iteracion = tiempo_iteracion * 1000;
+      /* Tiempo de la iteracion en microsegundos */
+      tiempo_iteracion = tiempo_iteracion * 1000000.0;
       vector_promedios_de_iteraciones.push_back(tiempo_iteracion);
     }
     /* Saco el promedio de clocks de correr esta instancia y lo imprimo en el
